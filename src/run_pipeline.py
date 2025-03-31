@@ -6,7 +6,7 @@ import argparse
 from datetime import datetime
 import time
 
-# Настройка логирования
+# Setting up logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -20,12 +20,12 @@ logger = logging.getLogger(__name__)
 
 def execute_script(script_path, description, env=None):
     """
-    Выполнение скрипта с обработкой ошибок и возвратом результатов
+    Execute script with error handling and return results
 
     Args:
-        script_path: Путь к Python-скрипту
-        description: Описание операции для логирования
-        env: Дополнительные переменные окружения (словарь)
+        script_path: Path to Python script
+        description: Description of operation for logging
+        env: Additional environment variables (dictionary)
 
     Returns:
         Tuple: (success, output, error, elapsed_time)
@@ -36,12 +36,12 @@ def execute_script(script_path, description, env=None):
     start_time = time.time()
 
     try:
-        # Подготовка переменных окружения
+        # Prepare environment variables
         process_env = os.environ.copy()
         if env:
             process_env.update(env)
 
-        # Запуск процесса
+        # Start process
         process = subprocess.Popen(
             [sys.executable, script_path],
             stdout=subprocess.PIPE,
@@ -52,17 +52,17 @@ def execute_script(script_path, description, env=None):
             env=process_env
         )
 
-        # Получение вывода
+        # Get output
         stdout, stderr = process.communicate()
 
         elapsed_time = time.time() - start_time
 
-        # Логирование вывода
+        # Log output
         if stdout:
             for line in stdout.splitlines():
                 logger.info(f"  {line}")
 
-        # Проверка ошибок
+        # Check errors
         if process.returncode != 0:
             logger.error(f"Script failed with exit code: {process.returncode}")
             if stderr:
@@ -84,17 +84,17 @@ def execute_script(script_path, description, env=None):
 
 
 def check_requirements():
-    """Проверка необходимых требований для запуска"""
+    """Check necessary requirements for execution"""
     try:
-        # Проверка наличия необходимых директорий
+        # Check for necessary directories
         for directory in ['data', 'models', 'reports']:
             os.makedirs(directory, exist_ok=True)
 
-        # Проверка Python-пакетов с правильными именами для импорта
+        # Check Python packages with correct import names
         required_packages = {
             'pandas': 'pandas',
             'numpy': 'numpy',
-            'scikit-learn': 'sklearn',  # Важное исправление: scikit-learn импортируется как sklearn
+            'scikit-learn': 'sklearn',  # Important fix: scikit-learn is imported as sklearn
             'matplotlib': 'matplotlib',
             'seaborn': 'seaborn',
             'joblib': 'joblib',
@@ -106,7 +106,7 @@ def check_requirements():
             try:
                 __import__(import_name)
             except ImportError:
-                if package_name != 'sqlite3':  # sqlite3 обычно включен в Python
+                if package_name != 'sqlite3':  # sqlite3 is usually included in Python
                     missing_packages.append(package_name)
 
         if missing_packages:
@@ -122,12 +122,12 @@ def check_requirements():
 
 def run_pipeline(args):
     """
-    Запуск полного пайплайна обработки данных и прогнозирования
+    Run complete data processing and forecasting pipeline
 
     Args:
-        args: Аргументы командной строки с параметрами
+        args: Command line arguments with parameters
     """
-    # Проверяем требования
+    # Check requirements
     requirements_met, message = check_requirements()
     if not requirements_met:
         logger.error(f"Requirements check failed: {message}")
@@ -142,7 +142,7 @@ def run_pipeline(args):
     print("=== S&P 500 FORECASTING PIPELINE ===")
     print(f"Target: {args.days}-day forecast")
 
-    # Определяем файлы скриптов в зависимости от выбранного режима
+    # Define script files based on selected mode
     if args.mode == 'full':
         scripts = [
             ("01_data_fetch.py", "Fetching historical S&P 500 data"),
@@ -157,7 +157,7 @@ def run_pipeline(args):
             ("05_forecast.py", "Generating updated forecast")
         ]
     elif args.mode == 'forecast':
-        # Только прогнозирование без обновления данных и переобучения
+        # Only forecasting without updating data and retraining
         scripts = [
             ("05_forecast.py", "Generating forecast with existing model")
         ]
@@ -166,7 +166,7 @@ def run_pipeline(args):
         print(f"[!] Invalid mode: {args.mode}")
         return False
 
-    # Выполняем скрипты последовательно
+    # Execute scripts sequentially
     all_success = True
 
     for script, description in scripts:
@@ -178,23 +178,23 @@ def run_pipeline(args):
             all_success = False
             break
 
-        # Подготовка переменных окружения для текущего скрипта
+        # Prepare environment variables for current script
         env = {}
 
-        # Настраиваем опции для конкретных скриптов
+        # Configure options for specific scripts
         if script == "05_forecast.py":
             env["FORECAST_DAYS"] = str(args.days)
         elif script == "03_model_train.py" and args.target:
             env["TARGET_TYPE"] = args.target
 
-        # Запускаем скрипт
+        # Run script
         success, output, error, elapsed_time = execute_script(script_path, description, env)
 
         if not success:
             all_success = False
             break
 
-    # Финальные итоги
+    # Final summary
     if all_success:
         logger.info("=== Pipeline completed successfully ===")
         print("\n=== PIPELINE COMPLETED SUCCESSFULLY ===")
@@ -210,7 +210,7 @@ def run_pipeline(args):
 
 
 if __name__ == "__main__":
-    # Парсинг аргументов командной строки
+    # Parse command line arguments
     parser = argparse.ArgumentParser(description='S&P 500 Forecasting Pipeline')
 
     parser.add_argument('--days', type=int, default=90,
@@ -224,8 +224,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # Запуск пайплайна
+    # Run pipeline
     success = run_pipeline(args)
 
-    # Код возврата
+    # Return code
     sys.exit(0 if success else 1)

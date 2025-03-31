@@ -4,7 +4,7 @@ import os
 import logging
 import sys
 
-# Настройка логирования (исправлено для Windows)
+# Setting up logging (fixed for Windows)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -18,128 +18,128 @@ logger = logging.getLogger(__name__)
 
 def import_csv_to_sqlite(csv_path, db_path, table_name='sp500'):
     """
-    Импортирует данные из CSV-файла в таблицу SQLite
+    Imports data from CSV file to SQLite table
 
     Args:
-        csv_path: Путь к CSV-файлу
-        db_path: Путь к базе данных SQLite
-        table_name: Имя таблицы для импорта
+        csv_path: Path to CSV file
+        db_path: Path to SQLite database
+        table_name: Name of table for import
     """
     try:
-        logger.info(f"Импорт данных из {csv_path} в базу данных {db_path}")
+        logger.info(f"Importing data from {csv_path} to database {db_path}")
 
-        # Проверяем наличие файла CSV
+        # Check if CSV file exists
         if not os.path.exists(csv_path):
-            logger.error(f"Файл {csv_path} не найден")
-            print(f"Ошибка: Файл {csv_path} не найден")
+            logger.error(f"File {csv_path} not found")
+            print(f"Error: File {csv_path} not found")
             return False
 
-        # Создаем директорию базы данных, если она не существует
+        # Create database directory if it doesn't exist
         os.makedirs(os.path.dirname(db_path), exist_ok=True)
 
-        # Загружаем данные из CSV
+        # Load data from CSV
         df = pd.read_csv(csv_path, parse_dates=['Date'])
 
-        # Проверка данных
+        # Data validation
         if df.empty:
-            logger.error("CSV-файл не содержит данных")
-            print("Ошибка: CSV-файл не содержит данных")
+            logger.error("CSV file contains no data")
+            print("Error: CSV file contains no data")
             return False
 
         expected_columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
         missing_columns = [col for col in expected_columns if col not in df.columns]
 
         if missing_columns:
-            logger.warning(f"В CSV отсутствуют столбцы: {', '.join(missing_columns)}")
-            print(f"Предупреждение: В CSV отсутствуют столбцы: {', '.join(missing_columns)}")
+            logger.warning(f"CSV is missing columns: {', '.join(missing_columns)}")
+            print(f"Warning: CSV is missing columns: {', '.join(missing_columns)}")
 
-        # Сохраняем в базу данных
+        # Save to database
         with sqlite3.connect(db_path) as conn:
             df.to_sql(table_name, conn, if_exists='replace', index=False)
 
-            # Создаем индекс для ускорения запросов
+            # Create index to speed up queries
             conn.execute(f"CREATE INDEX IF NOT EXISTS idx_{table_name}_date ON {table_name}(Date)")
 
-        logger.info(f"Импортировано {len(df)} строк в таблицу {table_name}")
-        print(f"Успешно импортировано {len(df)} строк в таблицу {table_name}")
+        logger.info(f"Imported {len(df)} rows into table {table_name}")
+        print(f"Successfully imported {len(df)} rows into table {table_name}")
         return True
 
     except Exception as e:
-        logger.error(f"Ошибка при импорте данных: {str(e)}")
-        print(f"Ошибка при импорте данных: {str(e)}")
+        logger.error(f"Error importing data: {str(e)}")
+        print(f"Error importing data: {str(e)}")
         return False
 
 
 def import_vix_data(csv_path, db_path):
     """
-    Импортирует данные VIX из CSV-файла в базу SQLite
+    Imports VIX data from CSV file into SQLite database
 
     Args:
-        csv_path: Путь к CSV-файлу с данными VIX
-        db_path: Путь к базе данных SQLite
+        csv_path: Path to CSV file with VIX data
+        db_path: Path to SQLite database
     """
     try:
         if not os.path.exists(csv_path):
-            logger.warning(f"Файл VIX данных {csv_path} не найден")
-            print(f"Предупреждение: Файл VIX данных {csv_path} не найден")
+            logger.warning(f"VIX data file {csv_path} not found")
+            print(f"Warning: VIX data file {csv_path} not found")
             return False
 
-        # Загружаем данные VIX
+        # Load VIX data
         df = pd.read_csv(csv_path, parse_dates=['Date'])
 
         if df.empty or 'VIX' not in df.columns:
-            logger.warning("Некорректные данные VIX")
-            print("Предупреждение: Некорректные данные VIX")
+            logger.warning("Invalid VIX data")
+            print("Warning: Invalid VIX data")
             return False
 
-        # Сохраняем в базу данных
+        # Save to database
         with sqlite3.connect(db_path) as conn:
             df.to_sql('vix_data', conn, if_exists='replace', index=False)
             conn.execute("CREATE INDEX IF NOT EXISTS idx_vix_date ON vix_data(Date)")
 
-        logger.info(f"Импортировано {len(df)} строк VIX данных")
-        print(f"Успешно импортировано {len(df)} строк VIX данных")
+        logger.info(f"Imported {len(df)} rows of VIX data")
+        print(f"Successfully imported {len(df)} rows of VIX data")
         return True
 
     except Exception as e:
-        logger.error(f"Ошибка при импорте данных VIX: {str(e)}")
-        print(f"Ошибка при импорте данных VIX: {str(e)}")
+        logger.error(f"Error importing VIX data: {str(e)}")
+        print(f"Error importing VIX data: {str(e)}")
         return False
 
 
 if __name__ == "__main__":
     try:
-        # Создаем директорию для данных, если её нет
+        # Create directory for data if it doesn't exist
         os.makedirs("data", exist_ok=True)
 
-        # Путь к CSV-файлу, созданному в 01_data_fetch.py
+        # Path to CSV file created in 01_data_fetch.py
         csv_path = 'data/sp500_1951_present.csv'
         vix_path = 'data/vix_data.csv'
 
-        # Путь к базе данных SQLite
+        # Path to SQLite database
         db_path = 'data/sp500.db'
 
-        # Если аргументы переданы через командную строку
+        # If arguments are passed via command line
         if len(sys.argv) > 1:
             csv_path = sys.argv[1]
 
         if len(sys.argv) > 2:
             db_path = sys.argv[2]
 
-        # Импортируем данные S&P 500
+        # Import S&P 500 data
         sp500_success = import_csv_to_sqlite(csv_path, db_path)
 
-        # Импортируем данные VIX, если они есть
+        # Import VIX data if available
         vix_success = import_vix_data(vix_path, db_path)
 
         if sp500_success:
-            print(f"Данные S&P 500 успешно импортированы в {db_path}")
+            print(f"S&P 500 data successfully imported to {db_path}")
         else:
-            print("Ошибка при импорте данных S&P 500")
+            print("Error importing S&P 500 data")
 
         if vix_success:
-            print(f"Данные VIX успешно импортированы в {db_path}")
+            print(f"VIX data successfully imported to {db_path}")
 
     except Exception as e:
-        print(f"Произошла непредвиденная ошибка: {str(e)}")
+        print(f"An unexpected error occurred: {str(e)}")
         sys.exit(1)

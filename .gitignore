@@ -57,4 +57,5 @@ reports/*
 *.iml
 *.iws
 *.ipr
-*
+# Ignore log files
+*.log

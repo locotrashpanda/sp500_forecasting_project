@@ -9,7 +9,7 @@ import json
 from datetime import datetime, timedelta
 import argparse
 
-# Настройка логирования
+# Setting up logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -22,9 +22,9 @@ logger = logging.getLogger(__name__)
 
 
 def check_database_structure():
-    """Проверка структуры базы данных"""
+    """Check database structure"""
     try:
-        # Проверяем существование файла базы данных
+        # Check if database file exists
         db_path = 'data/sp500.db'
         if not os.path.exists(db_path):
             logger.error(f"Database file not found: {db_path}")
@@ -34,14 +34,14 @@ def check_database_structure():
         results = {'database_exists': True}
 
         with sqlite3.connect(db_path) as conn:
-            # Получаем список таблиц
+            # Get list of tables
             cursor = conn.cursor()
             tables = cursor.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
             tables = [t[0] for t in tables]
 
             results['tables'] = tables
 
-            # Проверяем наличие ключевых таблиц
+            # Check for key tables
             required_tables = ['sp500', 'sp500_processed', 'predictions', 'future_predictions']
             missing_tables = [t for t in required_tables if t not in tables]
 
@@ -51,15 +51,15 @@ def check_database_structure():
             else:
                 results['missing_tables'] = []
 
-            # Проверяем структуру каждой таблицы
+            # Check structure of each table
             table_info = {}
             for table in tables:
                 try:
-                    # Получаем схему таблицы
+                    # Get table schema
                     schema = cursor.execute(f"PRAGMA table_info({table})").fetchall()
                     columns = [col[1] for col in schema]
 
-                    # Получаем количество строк
+                    # Get row count
                     row_count = cursor.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
 
                     table_info[table] = {
@@ -67,7 +67,7 @@ def check_database_structure():
                         'rows': row_count
                     }
 
-                    # Проверяем наличие ключевых столбцов
+                    # Check for key columns
                     if table == 'sp500' or table == 'sp500_processed':
                         if 'Date' not in columns:
                             logger.warning(f"Table {table} is missing Date column")
@@ -92,10 +92,10 @@ def check_database_structure():
 
 
 def check_stock_data():
-    """Проверка данных S&P 500"""
+    """Check S&P 500 data"""
     try:
         with sqlite3.connect('data/sp500.db') as conn:
-            # Проверяем существование таблицы sp500
+            # Check if sp500 table exists
             cursor = conn.cursor()
             table_exists = cursor.execute(
                 "SELECT name FROM sqlite_master WHERE type='table' AND name='sp500'"
@@ -105,14 +105,14 @@ def check_stock_data():
                 logger.error("Table 'sp500' not found in database")
                 return False, {'error': "Table 'sp500' not found"}
 
-            # Загружаем данные
+            # Load data
             df = pd.read_sql("SELECT * FROM sp500", conn, parse_dates=['Date'])
 
             if df.empty:
                 logger.error("sp500 table is empty")
                 return False, {'error': "sp500 table is empty"}
 
-            # Базовая проверка данных
+            # Basic data check
             results = {
                 'row_count': len(df),
                 'date_range': {
@@ -126,18 +126,18 @@ def check_stock_data():
                 }
             }
 
-            # Проверка пропущенных значений
+            # Check for missing values
             na_counts = df.isna().sum()
             results['missing_values'] = {col: int(count) for col, count in na_counts.items() if count > 0}
 
-            # Проверка дубликатов дат
+            # Check for duplicate dates
             duplicate_dates = df[df.duplicated('Date', keep=False)]
             results['duplicate_dates'] = duplicate_dates.shape[0]
 
-            # Проверка последовательности дат
+            # Check date sequence
             df_sorted = df.sort_values('Date')
             date_diffs = df_sorted['Date'].diff().dt.days
-            large_gaps = date_diffs[date_diffs > 3]  # Пропуски больше 3 дней
+            large_gaps = date_diffs[date_diffs > 3]  # Gaps larger than 3 days
 
             if not large_gaps.empty:
                 results['date_gaps'] = {
@@ -146,7 +146,7 @@ def check_stock_data():
                     'example': df_sorted['Date'].iloc[large_gaps.index[0]].strftime('%Y-%m-%d')
                 }
 
-            # Проверка выбросов цен
+            # Check price outliers
             price_z_scores = (df['Close'] - df['Close'].mean()) / df['Close'].std()
             outliers = df[abs(price_z_scores) > 3]
 
@@ -164,10 +164,10 @@ def check_stock_data():
                             outliers['Close'].values,
                             price_z_scores[outliers.index].values
                         )
-                                ][:5]  # Показываем только первые 5 выбросов
+                                ][:5]  # Show only the first 5 outliers
                 }
 
-            # Создаем визуализацию
+            # Create visualization
             os.makedirs('reports/validation', exist_ok=True)
 
             plt.figure(figsize=(14, 7))
@@ -179,7 +179,7 @@ def check_stock_data():
             plt.savefig('reports/validation/sp500_history.png', dpi=300, bbox_inches='tight')
             plt.close()
 
-            # Гистограмма объемов
+            # Volume histogram
             plt.figure(figsize=(14, 7))
             plt.hist(df['Volume'], bins=50)
             plt.title('S&P 500 Volume Distribution')
@@ -197,16 +197,16 @@ def check_stock_data():
 
 
 def check_model_files():
-    """Проверка файлов модели"""
+    """Check model files"""
     try:
-        # Проверяем существование директории моделей
+        # Check if models directory exists
         if not os.path.exists('models'):
             logger.error("Models directory not found")
             return False, {'models_dir_exists': False}
 
         results = {'models_dir_exists': True}
 
-        # Проверяем наличие файлов модели
+        # Check for model files
         model_files = [f for f in os.listdir('models') if f.endswith('.joblib')]
         results['model_files'] = model_files
 
@@ -217,7 +217,7 @@ def check_model_files():
 
         results['model_found'] = True
 
-        # Проверяем конфигурационные файлы
+        # Check configuration files
         config_files = {
             'training_config.json': False,
             'model_info.json': False,
@@ -229,7 +229,7 @@ def check_model_files():
             if os.path.exists(os.path.join('models', config_file)):
                 config_files[config_file] = True
 
-                # Читаем информацию из файлов
+                # Read information from files
                 with open(os.path.join('models', config_file), 'r') as f:
                     try:
                         data = json.load(f)
@@ -248,10 +248,10 @@ def check_model_files():
 
 
 def check_forecast_results():
-    """Проверка результатов прогнозирования"""
+    """Check forecast results"""
     try:
         with sqlite3.connect('data/sp500.db') as conn:
-            # Проверяем существование таблицы future_predictions
+            # Check if future_predictions table exists
             cursor = conn.cursor()
             table_exists = cursor.execute(
                 "SELECT name FROM sqlite_master WHERE type='table' AND name='future_predictions'"
@@ -261,14 +261,14 @@ def check_forecast_results():
                 logger.warning("No forecast results found")
                 return True, {'forecast_exists': False}
 
-            # Загружаем прогнозы
+            # Load forecasts
             forecast_df = pd.read_sql("SELECT * FROM future_predictions", conn, parse_dates=['Date'])
 
             if forecast_df.empty:
                 logger.warning("future_predictions table is empty")
                 return True, {'forecast_exists': True, 'forecast_empty': True}
 
-            # Определяем колонку с прогнозом
+            # Determine prediction column
             if 'Predicted_Price' in forecast_df.columns:
                 pred_col = 'Predicted_Price'
             elif 'Predicted' in forecast_df.columns:
@@ -282,7 +282,7 @@ def check_forecast_results():
                     'columns': list(forecast_df.columns)
                 }
 
-            # Базовая проверка прогноза
+            # Basic forecast check
             results = {
                 'forecast_exists': True,
                 'forecast_empty': False,
@@ -299,7 +299,7 @@ def check_forecast_results():
                 }
             }
 
-            # Проверка реалистичности прогноза
+            # Check forecast realism
             try:
                 historical = pd.read_sql("SELECT * FROM sp500 ORDER BY Date DESC LIMIT 1", conn)
                 last_real_price = float(historical['Close'].iloc[0])
@@ -311,7 +311,7 @@ def check_forecast_results():
                     'last_real_price': last_real_price,
                     'first_forecast': first_forecast,
                     'price_ratio': price_ratio,
-                    'seems_realistic': 0.8 < price_ratio < 1.2  # В пределах 20% от реальной цены
+                    'seems_realistic': 0.8 < price_ratio < 1.2  # Within 20% of real price
                 }
 
                 if not 0.8 < price_ratio < 1.2:
@@ -320,7 +320,7 @@ def check_forecast_results():
             except Exception as e:
                 logger.warning(f"Could not perform reality check: {str(e)}")
 
-            # Визуализация прогноза
+            # Forecast visualization
             os.makedirs('reports/validation', exist_ok=True)
 
             plt.figure(figsize=(14, 7))
@@ -340,7 +340,7 @@ def check_forecast_results():
 
 
 def save_validation_report(results):
-    """Создание отчета о валидации"""
+    """Create validation report"""
     try:
         os.makedirs('reports/validation', exist_ok=True)
 
@@ -351,7 +351,7 @@ def save_validation_report(results):
             f.write("=== S&P 500 FORECASTING SYSTEM VALIDATION ===\n\n")
             f.write(f"Report generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
 
-            # Проверка структуры БД
+            # DB structure check
             f.write("DATABASE STRUCTURE\n")
             f.write("-----------------\n")
             if results.get('database', {}).get('database_exists', False):
@@ -368,7 +368,7 @@ def save_validation_report(results):
                 f.write("Database exists: No\n")
             f.write("\n")
 
-            # Данные S&P 500
+            # S&P 500 Data
             f.write("S&P 500 DATA\n")
             f.write("-----------\n")
             stock_data = results.get('stock_data', {})
@@ -399,14 +399,14 @@ def save_validation_report(results):
                 f.write(f"Error: {stock_data.get('error', 'Unknown error')}\n")
             f.write("\n")
 
-            # Модель
+            # Model
             f.write("MODEL STATUS\n")
             f.write("------------\n")
             model_info = results.get('model', {})
             if model_info.get('model_found', False):
                 f.write(f"Model files found: {', '.join(model_info.get('model_files', []))}\n")
 
-                # Метрики модели, если доступны
+                # Model metrics if available
                 if 'model_metrics.json' in model_info and isinstance(model_info['model_metrics.json'], dict):
                     metrics = model_info['model_metrics.json']
                     f.write("Model metrics:\n")
@@ -419,7 +419,7 @@ def save_validation_report(results):
                 f.write("Model files found: No\n")
             f.write("\n")
 
-            # Прогноз
+            # Forecast
             f.write("FORECAST STATUS\n")
             f.write("---------------\n")
             forecast_info = results.get('forecast', {})
@@ -437,7 +437,7 @@ def save_validation_report(results):
                     f.write(f"Starting forecast: {price_range.get('start', 'N/A')}\n")
                     f.write(f"Ending forecast: {price_range.get('end', 'N/A')}\n")
 
-                    # Проверка реалистичности
+                    # Reality check
                     reality = forecast_info.get('reality_check', {})
                     if reality:
                         f.write(f"Last real price: {reality.get('last_real_price', 'N/A')}\n")
@@ -449,11 +449,11 @@ def save_validation_report(results):
                 f.write("Forecast exists: No\n")
             f.write("\n")
 
-            # Итоговое заключение
+            # Final conclusion
             f.write("VALIDATION CONCLUSION\n")
             f.write("--------------------\n")
 
-            # Оцениваем валидность системы
+            # Assess system validity
             db_valid = results.get('database', {}).get('database_exists', False) and not results.get('database',
                                                                                                      {}).get(
                 'missing_tables', [])
@@ -490,42 +490,42 @@ def save_validation_report(results):
 
 
 def run_validation():
-    """Запуск всех проверок и создание отчета"""
+    """Run all checks and create report"""
     try:
         print("=== Starting S&P 500 Forecasting System Validation ===")
 
         results = {}
 
-        # Проверка структуры базы данных
+        # Check database structure
         print("[*] Checking database structure...")
         success, db_results = check_database_structure()
         results['database'] = db_results
         print(f"[{'✓' if success else '✗'}] Database structure check")
 
-        # Проверка данных S&P 500
+        # Check S&P 500 data
         print("[*] Checking S&P 500 data...")
         success, stock_results = check_stock_data()
         results['stock_data'] = stock_results
         print(f"[{'✓' if success else '✗'}] S&P 500 data check")
 
-        # Проверка файлов модели
+        # Check model files
         print("[*] Checking model files...")
         success, model_results = check_model_files()
         results['model'] = model_results
         print(f"[{'✓' if success else '✗'}] Model files check")
 
-        # Проверка результатов прогнозирования
+        # Check forecast results
         print("[*] Checking forecast results...")
         success, forecast_results = check_forecast_results()
         results['forecast'] = forecast_results
         print(f"[{'✓' if success else '✗'}] Forecast results check")
 
-        # Создание отчета
+        # Create report
         print("[*] Generating validation report...")
         success = save_validation_report(results)
         print(f"[{'✓' if success else '✗'}] Report generation")
 
-        # Завершение
+        # Complete
         print("\n=== Validation Complete ===")
         print("Validation report saved to reports/validation/")
         print("- validation_summary.txt: Text summary")

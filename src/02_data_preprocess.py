@@ -11,7 +11,7 @@ import joblib
 import sys
 import json
 
-# Настройка логирования
+# Setting up logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -65,7 +65,7 @@ def add_technical_indicators(df):
     df['Lower_Band'] = df['MA_20'] - (2 * df['Volatility'])
     df['BB_Width'] = (df['Upper_Band'] - df['Lower_Band']) / df['MA_20']
 
-    # Normalized price indicators (относительные значения вместо абсолютных)
+    # Normalized price indicators (relative values instead of absolute)
     df['Price_to_MA_5'] = df['Close'] / df['MA_5']
     df['Price_to_MA_10'] = df['Close'] / df['MA_10']
     df['Price_to_MA_20'] = df['Close'] / df['MA_20']
@@ -84,7 +84,7 @@ def add_temporal_features(df):
     """Add temporal features"""
     logger.info("Adding temporal features...")
 
-    # Проверяем и преобразуем столбец Date, если необходимо
+    # Check and convert Date column if necessary
     if not pd.api.types.is_datetime64_any_dtype(df['Date']):
         logger.info("Converting Date column to datetime")
         df['Date'] = pd.to_datetime(df['Date']).dt.tz_localize(None)
@@ -92,7 +92,7 @@ def add_temporal_features(df):
         logger.info("Removing timezone information from Date column")
         df['Date'] = df['Date'].dt.tz_localize(None)
 
-    # Теперь добавляем темпоральные признаки
+    # Now add temporal features
     df['Day_of_week'] = df['Date'].dt.dayofweek
     df['Month'] = df['Date'].dt.month
     df['Quarter'] = df['Date'].dt.quarter
@@ -104,8 +104,8 @@ def add_temporal_features(df):
     df['Is_quarter_start'] = df['Date'].dt.is_quarter_start.astype(int)
     df['Is_quarter_end'] = df['Date'].dt.is_quarter_end.astype(int)
 
-    # Добавляем циклические признаки для сезонности
-    # Преобразуем месяц и день недели в синус и косинус для сохранения цикличности
+    # Add cyclical features for seasonality
+    # Convert month and day of the week to sine and cosine to preserve cyclicality
     df['Month_sin'] = np.sin(2 * np.pi * df['Month'] / 12)
     df['Month_cos'] = np.cos(2 * np.pi * df['Month'] / 12)
     df['Day_of_week_sin'] = np.sin(2 * np.pi * df['Day_of_week'] / 7)
@@ -118,23 +118,23 @@ def add_lag_features(df):
     """Add lag features"""
     logger.info("Adding lag features...")
 
-    # Лаги цен
+    # Price lags
     for lag in [1, 2, 3, 5, 10, 21]:
         df[f'Price_Lag_{lag}'] = df['Close'].shift(lag)
         df[f'Return_Lag_{lag}'] = df['Return'].shift(lag)
 
-    # Лаги для скользящих средних
+    # Moving average lags
     for ma in [5, 10, 20, 50]:
         df[f'MA_{ma}_Lag_1'] = df[f'MA_{ma}'].shift(1)
         df[f'MA_{ma}_Lag_5'] = df[f'MA_{ma}'].shift(5)
 
-    # Лаги для технических индикаторов
+    # Technical indicator lags
     df['RSI_Lag_1'] = df['RSI'].shift(1)
     df['MACD_Lag_1'] = df['MACD'].shift(1)
     df['BB_Width_Lag_1'] = df['BB_Width'].shift(1)
     df['Volatility_Lag_1'] = df['Volatility'].shift(1)
 
-    # Логарифм объема и его лаги
+    # Log volume and its lags
     for lag in [1, 5, 10]:
         df[f'Log_Volume_Lag_{lag}'] = df['Log_Volume'].shift(lag)
 
@@ -145,20 +145,20 @@ def add_interaction_features(df):
     """Add feature interactions"""
     logger.info("Adding feature interactions...")
 
-    # Интеракции между индикаторами
+    # Interactions between indicators
     df['RSI_MACD'] = df['RSI'] * df['MACD']
     df['Volatility_Volume'] = df['Volatility'] * df['Log_Volume']
     df['ROC_RSI'] = df['ROC_5'] * df['RSI'] / 100
 
-    # Трендовые индикаторы
+    # Trend indicators
     df['Trend_Strength'] = abs(df['MA_5'] - df['MA_50']) / df['MA_50']
     df['Above_200MA'] = (df['Close'] > df['MA_200']).astype(int)
     df['Above_50MA'] = (df['Close'] > df['MA_50']).astype(int)
 
-    # Волатильность по сравнению с историей
+    # Volatility compared to history
     df['Vol_Relative'] = df['Volatility'] / df['Volatility'].rolling(50).mean()
 
-    # Индикаторы объема
+    # Volume indicators
     df['Volume_Delta'] = df['Log_Volume'] - df['Log_Volume'].shift(1)
     df['Volume_Trend'] = df['Log_Volume'] / df['Log_Volume'].rolling(20).mean()
 
@@ -166,25 +166,25 @@ def add_interaction_features(df):
 
 
 def add_vix_features(df, conn):
-    """Добавление данных о волатильности (VIX)"""
+    """Adding volatility data (VIX)"""
     try:
         logger.info("Adding VIX features...")
 
-        # Проверяем, есть ли таблица VIX данных
+        # Check if VIX data table exists
         cursor = conn.cursor()
         vix_exists = cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='vix_data'").fetchone()
 
         if vix_exists:
-            # Загружаем VIX данные
+            # Load VIX data
             vix_data = pd.read_sql("SELECT * FROM vix_data", conn, parse_dates=['Date'])
 
-            # Соединяем данные
+            # Join data
             df = pd.merge(df, vix_data, on='Date', how='left')
 
-            # Заполняем пропущенные значения
+            # Fill missing values
             df['VIX'] = df['VIX'].ffill().bfill()
 
-            # Добавляем производные признаки от VIX
+            # Add derivative features from VIX
             df['VIX_Change'] = df['VIX'].pct_change()
             df['VIX_MA_10'] = df['VIX'].rolling(10).mean()
             df['VIX_Ratio'] = df['VIX'] / df['VIX_MA_10']
@@ -193,7 +193,7 @@ def add_vix_features(df, conn):
             logger.info("VIX features added successfully")
         else:
             logger.warning("VIX data table not found. VIX features will not be added.")
-            # Добавляем нулевые значения для совместимости
+            # Add zero values for compatibility
             df['VIX'] = np.nan
             df['VIX_Change'] = np.nan
     except Exception as e:
@@ -214,16 +214,16 @@ def handle_missing_values(df):
     logger.info(f"Initial missing values: {initial_missing}")
     logger.info(f"Columns with most missing values: \n{df.isna().sum().sort_values(ascending=False).head(10)}")
 
-    # Заполнение пропусков для основных столбцов
+    # Fill gaps for main columns
     numeric_cols = df.select_dtypes(include=[np.number]).columns
     df[numeric_cols] = df[numeric_cols].interpolate(method='linear', limit_direction='both')
 
-    # Проверим, остались ли пропуски и удалим строки, где все равно есть NaN
+    # Check if gaps remain and remove rows that still have NaN
     if df.isna().any().any():
         df = df.dropna()
         logger.info(f"Rows after removing remaining NaN: {len(df)}")
 
-    # Заменяем оставшиеся бесконечности
+    # Replace remaining infinities
     df.replace([np.inf, -np.inf], np.nan, inplace=True)
     df = df.fillna(method='ffill').fillna(method='bfill')
 
@@ -234,10 +234,10 @@ def handle_missing_values(df):
 
 
 def transform_target(df, target_column='Close'):
-    """Преобразование целевой переменной для лучшего прогнозирования"""
+    """Transform target variable for better forecasting"""
     logger.info(f"Transforming target variable: {target_column}")
 
-    # Проверка на NaN и infinity в целевой переменной
+    # Check for NaN and infinity in target variable
     if df[target_column].isna().any():
         logger.warning(f"NaN values found in {target_column}. Filling with forward fill method.")
         df[target_column] = df[target_column].fillna(method='ffill').fillna(method='bfill')
@@ -247,30 +247,30 @@ def transform_target(df, target_column='Close'):
         df[target_column] = df[target_column].replace([np.inf, -np.inf], np.nan)
         df[target_column] = df[target_column].fillna(method='ffill').fillna(method='bfill')
 
-    # Создаем целевую переменную: процентное изменение цены закрытия на следующий день
+    # Create target variable: percentage change in closing price for the next day
     df['Next_Day_Return'] = df[target_column].pct_change(periods=-1)
 
-    # Также добавляем логарифмическую цену и целевую переменную как будущий логарифм цены
+    # Also add logarithmic price and target variable as future log price
     df['Log_Close'] = np.log(df[target_column])
     df['Next_Log_Close'] = df['Log_Close'].shift(-1)
 
-    # Значения смещения на 1, 3, 5, 10 дней вперед
+    # Shift values for 1, 3, 5, 10 days ahead
     for days in [1, 3, 5, 10]:
         df[f'Return_{days}d'] = df[target_column].pct_change(periods=-days)
         df[f'Next_Close_{days}d'] = df[target_column].shift(-days)
 
-    # Проверяем и заполняем NaN в целевых переменных
+    # Check and fill NaN in target variables
     target_columns = ['Next_Day_Return', 'Next_Log_Close'] + \
                      [f'Return_{days}d' for days in [1, 3, 5, 10]] + \
                      [f'Next_Close_{days}d' for days in [1, 3, 5, 10]]
 
     for col in target_columns:
         if df[col].isna().any():
-            # Используем последнее доступное значение для прогноза будущих цен
+            # Use last available value for forecasting future prices
             logger.warning(f"Filling NaN values in {col}")
             df[col] = df[col].fillna(method='ffill')
 
-            # Если все еще есть NaN (например, в начале временного ряда), используем обратное заполнение
+            # If still NaN (for example, at the beginning of time series), use backfill
             if df[col].isna().any():
                 df[col] = df[col].fillna(method='bfill')
 
@@ -278,7 +278,7 @@ def transform_target(df, target_column='Close'):
 
 
 def save_target_info(df, target_column='Close'):
-    """Сохраняем информацию о целевой переменной для обратного преобразования"""
+    """Save target variable information for reverse transformation"""
     target_info = {
         'mean': float(df[target_column].mean()),
         'std': float(df[target_column].std()),
@@ -287,7 +287,7 @@ def save_target_info(df, target_column='Close'):
         'last_value': float(df[target_column].iloc[-1])
     }
 
-    # Сохраняем информацию в JSON
+    # Save information to JSON
     import json
     with open('models/target_info.json', 'w') as f:
         json.dump(target_info, f)
@@ -301,14 +301,14 @@ def plot_feature_distributions(df, report_dir='reports'):
     try:
         os.makedirs(report_dir, exist_ok=True)
 
-        # Выбираем основные признаки для визуализации
+        # Select main features for visualization
         key_features = ['Close', 'Volume', 'Return', 'MA_5', 'MA_50',
                         'Volatility', 'RSI', 'MACD', 'BB_Width', 'VIX']
 
-        # Отбираем только существующие в данных признаки
+        # Select only features that exist in the data
         features_to_plot = [f for f in key_features if f in df.columns]
 
-        # Определяем размер сетки
+        # Define grid size
         rows = (len(features_to_plot) + 3) // 4
         cols = min(4, len(features_to_plot))
 
@@ -320,20 +320,20 @@ def plot_feature_distributions(df, report_dir='reports'):
             plt.title(col)
             plt.grid(True, linestyle='--', alpha=0.5)
 
-            # Добавляем статистику распределения
+            # Add distribution statistics
             mean = df[col].mean()
             median = df[col].median()
             plt.axvline(mean, color='r', linestyle='--', label=f'Mean: {mean:.2f}')
             plt.axvline(median, color='g', linestyle='-.', label=f'Median: {median:.2f}')
 
-            if i <= 4:  # Добавляем легенду только в верхнем ряду
+            if i <= 4:  # Add legend only in the top row
                 plt.legend(fontsize=8)
 
         plt.tight_layout()
         plt.savefig(f'{report_dir}/feature_distributions.png', dpi=300)
         plt.close()
 
-        # Корреляционный анализ
+        # Correlation analysis
         corr_cols = features_to_plot + ['Next_Day_Return']
         corr_cols = [c for c in corr_cols if c in df.columns]
 
@@ -354,12 +354,12 @@ def plot_feature_distributions(df, report_dir='reports'):
 def save_processed_data(df, conn):
     """Save processed data to database"""
     try:
-        # Сохраняем в БД
+        # Save to DB
         df.to_sql("sp500_processed", conn, if_exists="replace", index=False)
         conn.execute("CREATE INDEX IF NOT EXISTS date_index ON sp500_processed(Date)")
         conn.commit()
 
-        # Также сохраняем отдельно последние данные для прогнозирования
+        # Also save the last data separately for forecasting
         last_90_days = df.sort_values('Date').tail(90)
         last_90_days.to_sql("sp500_recent", conn, if_exists="replace", index=False)
 
@@ -406,13 +406,13 @@ def preprocess_data():
     try:
         logger.info("Starting data processing...")
 
-        # Создаем директории для результатов
+        # Create directories for results
         os.makedirs("data", exist_ok=True)
         os.makedirs("reports", exist_ok=True)
         os.makedirs("models", exist_ok=True)
 
         with sqlite3.connect("data/sp500.db") as conn:
-            # Проверяем существование таблицы sp500
+            # Check existence of sp500 table
             cursor = conn.cursor()
             table_exists = cursor.execute(
                 "SELECT name FROM sqlite_master WHERE type='table' AND name='sp500'").fetchone()
@@ -421,9 +421,9 @@ def preprocess_data():
                 logger.error("Table 'sp500' not found in database. Make sure to run data_fetch.py first.")
                 return None
 
-            # Важное изменение: явно преобразуем даты и убираем временные зоны
+            # Important change: explicitly convert dates and remove time zones
             df = pd.read_sql("SELECT * FROM sp500", conn)
-            # Преобразуем 'Date' в datetime и удаляем информацию о временной зоне
+            # Convert 'Date' to datetime and remove timezone information
             df['Date'] = pd.to_datetime(df['Date']).dt.tz_localize(None)
 
             if df.empty:
@@ -434,7 +434,7 @@ def preprocess_data():
             logger.info(f"Date range: {df['Date'].min()} to {df['Date'].max()}")
             logger.info(f"Initial S&P 500 price range: {df['Close'].min():.2f} to {df['Close'].max():.2f}")
 
-        # Пайплайн обработки данных
+        # Data processing pipeline
         df = add_technical_indicators(df)
         df = add_temporal_features(df)
         df = add_lag_features(df)
@@ -446,28 +446,28 @@ def preprocess_data():
         df = handle_missing_values(df)
         df = transform_target(df)
 
-        # Визуализируем признаки до масштабирования
+        # Visualize features before scaling
         plot_feature_distributions(df, report_dir='reports/before_scaling')
 
-        # Сохраняем информацию о целевой переменной
+        # Save target variable information
         target_info = save_target_info(df)
 
-        # Масштабируем признаки
+        # Scale features
         df_scaled, scaler = scale_features(df)
 
-        # Визуализируем после масштабирования
+        # Visualize after scaling
         plot_feature_distributions(df_scaled, report_dir='reports/after_scaling')
 
-        # Сохраняем список признаков для модели
+        # Save feature list for model
         feature_cols = df_scaled.columns.drop(['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume',
                                                'Next_Day_Return', 'Next_Log_Close',
                                                'Return_1d', 'Return_3d', 'Return_5d', 'Return_10d',
                                                'Next_Close_1d', 'Next_Close_3d', 'Next_Close_5d', 'Next_Close_10d'])
 
-        # Сохраняем список признаков
+        # Save feature list
         pd.Series(feature_cols.tolist()).to_json('models/feature_names.json')
 
-        # Сохранение результатов
+        # Save results
         with sqlite3.connect("data/sp500.db") as conn:
             save_processed_data(df_scaled, conn)
 

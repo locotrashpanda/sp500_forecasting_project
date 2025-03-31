@@ -17,7 +17,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
-# Настройки
+# Settings
 warnings.filterwarnings('ignore', category=UserWarning)
 logging.basicConfig(
     level=logging.INFO,
@@ -31,10 +31,10 @@ logger = logging.getLogger(__name__)
 
 
 def load_data():
-    """Загрузка обработанных данных из базы данных"""
+    """Load processed data from database"""
     try:
         with sqlite3.connect("data/sp500.db") as conn:
-            # Проверяем, есть ли обработанные данные
+            # Check if processed data exists
             cursor = conn.cursor()
             table_exists = cursor.execute(
                 "SELECT name FROM sqlite_master WHERE type='table' AND name='sp500_processed'"
@@ -59,25 +59,25 @@ def load_data():
 
 def prepare_features_targets(df, target_type='next_price', forecast_horizon=1):
     """
-    Подготовка признаков и целевых переменных в зависимости от выбранной стратегии
+    Prepare features and target variables depending on the chosen strategy
 
     Args:
-        df: DataFrame с обработанными данными
-        target_type: Тип целевой переменной ('next_return', 'next_price', 'log_price')
-        forecast_horizon: Горизонт прогнозирования в днях (1, 3, 5, 10)
+        df: DataFrame with processed data
+        target_type: Target variable type ('next_return', 'next_price', 'log_price')
+        forecast_horizon: Forecast horizon in days (1, 3, 5, 10)
     """
     try:
-        # Исключаем колонки дат и ценовые колонки, которые могут привести к "утечке данных"
+        # Exclude date columns and price columns that may cause "data leakage"
         exclude_columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
 
-        # Исключаем все целевые колонки
+        # Exclude all target columns
         target_columns = [col for col in df.columns if col.startswith('Next_')
                           or col.startswith('Return_') or col.endswith('d')]
 
         exclude_columns.extend(target_columns)
         feature_columns = [col for col in df.columns if col not in exclude_columns]
 
-        # Определяем целевую переменную в зависимости от выбранной стратегии
+        # Define target variable depending on the chosen strategy
         if target_type == 'next_return':
             if forecast_horizon == 1:
                 target_column = 'Next_Day_Return'
@@ -90,7 +90,7 @@ def prepare_features_targets(df, target_type='next_price', forecast_horizon=1):
         else:
             raise ValueError(f"Invalid target_type: {target_type}")
 
-        # Проверяем, есть ли целевая колонка в данных
+        # Check if target column exists in the data
         if target_column not in df.columns:
             logger.warning(f"Target column {target_column} not found in data.")
             logger.warning(
@@ -100,7 +100,7 @@ def prepare_features_targets(df, target_type='next_price', forecast_horizon=1):
         logger.info(f"Using target variable: {target_column}")
         logger.info(f"Number of features: {len(feature_columns)}")
 
-        # Сохраняем список признаков и целевой переменной для последующего использования
+        # Save feature list and target variable for later use
         training_config = {
             'features': feature_columns,
             'target_column': target_column,
@@ -111,17 +111,17 @@ def prepare_features_targets(df, target_type='next_price', forecast_horizon=1):
         with open('models/training_config.json', 'w') as f:
             json.dump(training_config, f)
 
-        # Проверяем наличие NaN в целевой переменной
+        # Check for NaN in target variable
         if df[target_column].isna().any():
             logger.warning(f"NaN values found in target column '{target_column}'. Filling forward.")
             df[target_column] = df[target_column].fillna(method='ffill')
 
-            # Если все равно остались NaN, заполняем средним значением
+            # If NaN still remain, fill with mean value
             if df[target_column].isna().any():
                 logger.warning("Still have NaN values after forward fill. Using mean value.")
                 df[target_column] = df[target_column].fillna(df[target_column].mean())
 
-        # Проверяем на бесконечные значения в целевой переменной
+        # Check for infinite values in target variable
         if np.isinf(df[target_column]).any():
             logger.warning(f"Infinite values found in target column '{target_column}'. Replacing with NaN and filling.")
             df[target_column] = df[target_column].replace([np.inf, -np.inf], np.nan)
@@ -135,13 +135,13 @@ def prepare_features_targets(df, target_type='next_price', forecast_horizon=1):
 
 
 def split_time_series_data(X, y, df, test_size=0.2, validation_size=0.1):
-    """Разделение временных рядов на обучающую, валидационную и тестовую выборки"""
+    """Split time series data into training, validation and test sets"""
     try:
         total_size = len(X)
         test_idx = int(total_size * (1 - test_size))
         val_idx = int(total_size * (1 - test_size - validation_size))
 
-        # Сегменты данных
+        # Data segments
         X_train = X.iloc[:val_idx]
         y_train = y.iloc[:val_idx]
         dates_train = df['Date'].iloc[:val_idx]
@@ -166,18 +166,18 @@ def split_time_series_data(X, y, df, test_size=0.2, validation_size=0.1):
 
 
 def train_evaluate_model(X_train, y_train, X_val, y_val, target_type, feature_names):
-    """Обучение и оценка нескольких моделей с оптимизацией гиперпараметров"""
+    """Train and evaluate multiple models with hyperparameter optimization"""
     try:
-        # Создаем TimeSeriesSplit для кросс-валидации
+        # Create TimeSeriesSplit for cross-validation
         tscv = TimeSeriesSplit(n_splits=5)
 
-        # Определяем целевую метрику в зависимости от типа цели
+        # Define target metric depending on the target type
         if target_type == 'next_return':
-            scoring = 'neg_mean_squared_error'  # MSE лучше для доходности
+            scoring = 'neg_mean_squared_error'  # MSE is better for returns
         else:
-            scoring = 'neg_mean_absolute_error'  # MAE лучше для цен
+            scoring = 'neg_mean_absolute_error'  # MAE is better for prices
 
-        # Оптимизация гиперпараметров для градиентного бустинга
+        # Hyperparameter optimization for Gradient Boosting
         gb_param_grid = {
             'n_estimators': [100, 200, 300, 500],
             'learning_rate': [0.01, 0.05, 0.1],
@@ -186,12 +186,12 @@ def train_evaluate_model(X_train, y_train, X_val, y_val, target_type, feature_na
             'subsample': [0.8, 0.9, 1.0]
         }
 
-        # Ridge регрессия для сравнения
+        # Ridge regression for comparison
         ridge_param_grid = {
             'alpha': [0.1, 0.5, 1.0, 5.0, 10.0]
         }
 
-        # RandomForest для сравнения
+        # RandomForest for comparison
         rf_param_grid = {
             'n_estimators': [100, 200, 300],
             'max_depth': [5, 10, 15],
@@ -217,11 +217,11 @@ def train_evaluate_model(X_train, y_train, X_val, y_val, target_type, feature_na
         best_val_score = float('-inf')
         best_model_name = None
 
-        # Обучение и оптимизация моделей
+        # Training and optimization of models
         for name, config in models.items():
             logger.info(f"Training {name} model...")
 
-            # RandomizedSearchCV для оптимизации гиперпараметров
+            # RandomizedSearchCV for hyperparameter optimization
             search = RandomizedSearchCV(
                 estimator=config['estimator'],
                 param_distributions=config['param_grid'],
@@ -236,7 +236,7 @@ def train_evaluate_model(X_train, y_train, X_val, y_val, target_type, feature_na
             search.fit(X_train, y_train)
             best_model = search.best_estimator_
 
-            # Оценка на валидационном наборе
+            # Evaluation on validation set
             val_score = -mean_squared_error(y_val, best_model.predict(X_val))
 
             logger.info(f"{name} validation score: {val_score:.6f}")
@@ -248,24 +248,24 @@ def train_evaluate_model(X_train, y_train, X_val, y_val, target_type, feature_na
                 'best_params': search.best_params_
             }
 
-            # Отслеживаем лучшую модель
+            # Track the best model
             if val_score > best_val_score:
                 best_val_score = val_score
                 best_model_name = name
 
         logger.info(f"Best model: {best_model_name} with validation score: {best_val_score:.6f}")
 
-        # Возвращаем лучшую модель
+        # Return the best model
         best_model = best_models[best_model_name]['model']
 
-        # Если это градиентный бустинг или RandomForest, выводим важность признаков
+        # If this is Gradient Boosting or RandomForest, output feature importances
         if hasattr(best_model, 'feature_importances_'):
             feature_importance = pd.DataFrame({
                 'Feature': feature_names,
                 'Importance': best_model.feature_importances_
             }).sort_values('Importance', ascending=False)
 
-            # Сохраняем важность признаков в БД
+            # Save feature importances to DB
             with sqlite3.connect("data/sp500.db") as conn:
                 feature_importance.to_sql('feature_importance', conn, if_exists='replace', index=False)
 
@@ -281,25 +281,25 @@ def train_evaluate_model(X_train, y_train, X_val, y_val, target_type, feature_na
 
 
 def evaluate_model_performance(model, X_test, y_test, dates_test, target_type):
-    """Оценка производительности модели на тестовой выборке"""
+    """Evaluate model performance on test set"""
     try:
-        # Проверка на пропущенные значения в тестовых данных
+        # Check for missing values in test data
         if X_test.isna().any().any():
             logger.warning("NaN values found in X_test. Filling with zeros.")
             X_test = X_test.fillna(0)
 
         if y_test.isna().any():
             logger.warning("NaN values found in y_test. Removing NaN rows.")
-            # Создаем маску действительных значений
+            # Create mask for valid values
             valid_mask = ~y_test.isna()
             y_test = y_test[valid_mask]
             X_test = X_test.loc[valid_mask.index[valid_mask]]
             dates_test = dates_test[valid_mask]
 
-        # Генерация предсказаний
+        # Generate predictions
         predictions = model.predict(X_test)
 
-        # Проверка на NaN в предсказаниях
+        # Check for NaN in predictions
         if np.isnan(predictions).any():
             logger.warning("NaN values found in predictions. Removing NaN values.")
             valid_pred_mask = ~np.isnan(predictions)
@@ -310,7 +310,7 @@ def evaluate_model_performance(model, X_test, y_test, dates_test, target_type):
             actual_values = y_test.values
             actual_dates = dates_test
 
-        # Если размеры не совпадают, логируем ошибку и обрезаем до минимального размера
+        # If sizes don't match, log error and trim to minimum size
         if len(predictions) != len(actual_values):
             logger.warning(f"Mismatch in sizes: predictions={len(predictions)}, actual={len(actual_values)}")
             min_len = min(len(predictions), len(actual_values))
@@ -318,25 +318,25 @@ def evaluate_model_performance(model, X_test, y_test, dates_test, target_type):
             actual_values = actual_values[:min_len]
             actual_dates = actual_dates[:min_len]
 
-        # Рассчитываем метрики
+        # Calculate metrics
         mse = mean_squared_error(actual_values, predictions)
         rmse = np.sqrt(mse)
         mae = mean_absolute_error(actual_values, predictions)
         r2 = r2_score(actual_values, predictions)
 
-        # Создаем DataFrame с результатами
+        # Create DataFrame with results
         results_df = pd.DataFrame({
             'Date': actual_dates,
             'Actual': actual_values,
             'Predicted': predictions
         })
 
-        # Если целевая переменная - доходность, добавляем накопленную доходность
+        # If target variable is return, add cumulative return
         if target_type == 'next_return':
             results_df['Cumulative_Actual'] = (1 + results_df['Actual']).cumprod() - 1
             results_df['Cumulative_Predicted'] = (1 + results_df['Predicted']).cumprod() - 1
 
-        # Сохраняем метрики
+        # Save metrics
         metrics = {
             'mse': float(mse),
             'rmse': float(rmse),
@@ -346,11 +346,11 @@ def evaluate_model_performance(model, X_test, y_test, dates_test, target_type):
             'test_period_end': actual_dates.max().strftime('%Y-%m-%d')
         }
 
-        # Сохраняем метрики в JSON
+        # Save metrics to JSON
         with open('models/model_metrics.json', 'w') as f:
             json.dump(metrics, f)
 
-        # Сохраняем результаты предсказаний
+        # Save prediction results
         with sqlite3.connect("data/sp500.db") as conn:
             results_df.to_sql('predictions', conn, if_exists='replace', index=False)
 
@@ -367,11 +367,11 @@ def evaluate_model_performance(model, X_test, y_test, dates_test, target_type):
         raise
 
 def visualize_model_performance(results_df, metrics, target_type):
-    """Визуализация результатов модели"""
+    """Visualize model results"""
     try:
         os.makedirs('reports', exist_ok=True)
 
-        # 1. График предсказаний против реальных значений
+        # 1. Plot of predictions vs actual values
         plt.figure(figsize=(14, 7))
         plt.plot(results_df['Date'], results_df['Actual'], label='Actual', color='blue', alpha=0.7)
         plt.plot(results_df['Date'], results_df['Predicted'], label='Predicted', color='red', alpha=0.7)
@@ -389,7 +389,7 @@ def visualize_model_performance(results_df, metrics, target_type):
         plt.savefig('reports/predictions_vs_actual.png', dpi=300, bbox_inches='tight')
         plt.close()
 
-        # 2. График ошибок предсказаний
+        # 2. Prediction errors plot
         plt.figure(figsize=(14, 7))
 
         errors = results_df['Actual'] - results_df['Predicted']
@@ -403,7 +403,7 @@ def visualize_model_performance(results_df, metrics, target_type):
         plt.savefig('reports/prediction_errors.png', dpi=300, bbox_inches='tight')
         plt.close()
 
-        # 3. Если это доходность, показываем накопленную доходность
+        # 3. If this is return, show cumulative return
         if target_type == 'next_return':
             plt.figure(figsize=(14, 7))
             plt.plot(results_df['Date'], results_df['Cumulative_Actual'], label='Actual Cumulative Return',
@@ -419,7 +419,7 @@ def visualize_model_performance(results_df, metrics, target_type):
             plt.savefig('reports/cumulative_returns.png', dpi=300, bbox_inches='tight')
             plt.close()
 
-        # 4. Гистограмма распределения ошибок
+        # 4. Error distribution histogram
         plt.figure(figsize=(14, 7))
         sns.histplot(errors, kde=True, color='purple')
         plt.axvline(x=0, color='r', linestyle='-', alpha=0.3)
@@ -438,16 +438,16 @@ def visualize_model_performance(results_df, metrics, target_type):
 
 
 def save_model(model, model_name, target_type, feature_names):
-    """Сохранение модели и связанной информации"""
+    """Save model and related information"""
     try:
-        # Создаем директорию для моделей, если она не существует
+        # Create directory for models if it doesn't exist
         os.makedirs('models', exist_ok=True)
 
-        # Сохраняем модель
+        # Save model
         model_path = f'models/sp500_{target_type}_model.joblib'
         joblib.dump(model, model_path)
 
-        # Сохраняем дополнительную информацию
+        # Save additional information
         model_info = {
             'model_type': model_name,
             'target_type': target_type,
@@ -468,37 +468,37 @@ def save_model(model, model_name, target_type, feature_names):
 
 
 def train_model(target_type='next_price', forecast_horizon=1):
-    """Основной пайплайн обучения модели"""
+    """Main model training pipeline"""
     try:
         logger.info("=== Starting model training ===")
         logger.info(f"Target type: {target_type}, Forecast horizon: {forecast_horizon} days")
 
-        # Создаем необходимые директории
+        # Create necessary directories
         os.makedirs('models', exist_ok=True)
         os.makedirs('reports', exist_ok=True)
 
-        # Загружаем данные
+        # Load data
         df = load_data()
 
-        # Подготавливаем признаки и целевые переменные
+        # Prepare features and target variables
         X, y, feature_names, target_column = prepare_features_targets(df, target_type, forecast_horizon)
 
-        # Разделяем данные
+        # Split data
         X_train, X_val, X_test, y_train, y_val, y_test, dates_train, dates_val, dates_test = \
             split_time_series_data(X, y, df)
 
-        # Обучаем и оцениваем модели
+        # Train and evaluate models
         best_model, best_model_name, all_models = train_evaluate_model(
             X_train, y_train, X_val, y_val, target_type, feature_names
         )
 
-        # Оцениваем на тестовой выборке
+        # Evaluate on test set
         results_df, metrics = evaluate_model_performance(best_model, X_test, y_test, dates_test, target_type)
 
-        # Визуализируем результаты
+        # Visualize results
         visualize_model_performance(results_df, metrics, target_type)
 
-        # Сохраняем модель
+        # Save model
         save_model(best_model, best_model_name, target_type, feature_names)
 
         logger.info("=== Model training completed successfully ===")
@@ -511,5 +511,5 @@ def train_model(target_type='next_price', forecast_horizon=1):
 
 
 if __name__ == "__main__":
-    # Вы можете выбрать тип целевой переменной и горизонт прогнозирования
+    # You can choose target variable type and forecast horizon
     train_model(target_type='next_price', forecast_horizon=1)
