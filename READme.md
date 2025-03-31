@@ -20,7 +20,7 @@ A machine learning system for forecasting S&P 500 index movements using historic
 
 1. Clone this repository
 ```bash
-git clone https://github.com/yourusername/sp500_forecasting_project.git
+git clone https://github.com/locotrashpanda/sp500_forecasting_project.git
 cd sp500_forecasting_project
 ```
 
