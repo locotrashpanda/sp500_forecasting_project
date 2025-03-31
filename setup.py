@@ -19,7 +19,7 @@ setup(
     author_email="garnykalex@gmail.com",
     description="S&P 500 forecasting system using machine learning",
     keywords="finance, machine learning, forecasting, stock market, S&P 500",
-    url="https://github.com/yourusername/sp500_forecasting_project",
+    url="https://github.com/locotrashpanda/sp500_forecasting_project",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Financial and Insurance Industry",
