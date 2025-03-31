@@ -1,0 +1,79 @@
+2025-03-30 01:41:52,504 - INFO - Starting visualization process...
+2025-03-30 01:41:52,556 - ERROR - Error loading data: Execution failed on sql 'SELECT * FROM metrics': no such table: metrics
+2025-03-30 01:41:52,557 - ERROR - Visualization failed: Execution failed on sql 'SELECT * FROM metrics': no such table: metrics
+Traceback (most recent call last):
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\io\sql.py", line 2674, in execute
+    cur.execute(sql, *args)
+    ~~~~~~~~~~~^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: metrics
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\04_results_export.py", line 180, in <module>
+    df, preds, metrics = load_data()
+                         ~~~~~~~~~^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\04_results_export.py", line 29, in load_data
+    metrics = pd.read_sql("SELECT * FROM metrics", conn)
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\io\sql.py", line 706, in read_sql
+    return pandas_sql.read_query(
+           ~~~~~~~~~~~~~~~~~~~~~^
+        sql,
+        ^^^^
+    ...<6 lines>...
+        dtype=dtype,
+        ^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\io\sql.py", line 2738, in read_query
+    cursor = self.execute(sql, params)
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\io\sql.py", line 2686, in execute
+    raise ex from exc
+pandas.errors.DatabaseError: Execution failed on sql 'SELECT * FROM metrics': no such table: metrics
+2025-03-30 03:26:10,740 - INFO - Starting visualization process...
+2025-03-30 03:26:12,252 - INFO - Prediction plot saved successfully
+2025-03-30 03:26:15,674 - INFO - Error analysis plots saved successfully
+2025-03-30 03:26:16,485 - INFO - Feature importance plot saved successfully
+2025-03-30 03:26:16,485 - INFO - All visualizations saved to reports/ folder
+2025-03-30 05:27:26,665 - INFO - Starting visualization process...
+2025-03-30 05:27:26,907 - ERROR - Error generating prediction plot: 'Date'
+2025-03-30 05:27:26,907 - ERROR - Visualization failed: 'Date'
+Traceback (most recent call last):
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Date'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\04_results_export.py", line 164, in <module>
+    plot_predictions(df, preds, metrics, future)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\04_results_export.py", line 79, in plot_predictions
+    plt.plot(future['Date'], future['Predicted'],
+             ~~~~~~^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Date'
+2025-03-30 05:29:22,580 - INFO - Starting visualization process...
+2025-03-30 05:29:24,067 - INFO - Prediction plot saved successfully
+2025-03-30 05:29:26,448 - INFO - Error analysis plots saved successfully
+2025-03-30 05:29:27,267 - INFO - Feature importance plot saved successfully
+2025-03-30 05:29:27,267 - INFO - All visualizations saved to reports/ folder
+2025-03-30 10:09:31,550 - INFO - Starting visualization process...
+2025-03-30 10:09:33,171 - INFO - Prediction plot saved successfully
+2025-03-30 10:09:37,285 - INFO - 3-month forecast plot saved successfully
+2025-03-30 10:09:39,502 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-30 10:09:39,503 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-30 10:09:40,463 - INFO - Monthly forecast statistics plot saved successfully
+2025-03-30 10:09:42,576 - INFO - Error analysis plots saved successfully
+2025-03-30 10:09:43,390 - INFO - Feature importance plot saved successfully
+2025-03-30 10:09:43,397 - INFO - Summary report saved to reports/summary_report.txt
+2025-03-30 10:09:43,397 - INFO - All visualizations saved to reports/ folder

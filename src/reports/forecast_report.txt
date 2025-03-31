@@ -1,0 +1,49 @@
+========== S&P 500 FORECAST SUMMARY ==========
+
+Report generated: 2025-03-31 15:07:57
+
+MODEL PERFORMANCE
+-----------------
+RMSE: 33.3800
+MAE: 21.6118
+R²: 0.9993
+
+FORECAST INFORMATION
+--------------------
+Forecast period: 2025-03-31 to 2025-08-01
+Number of days: 90
+Starting price: 5580.94
+Ending price: 5559.31
+Total forecast change: -0.39%
+Change from last real price (5580.94): -0.39%
+
+Maximum price: 5621.10 on 2025-04-01
+Minimum price: 5555.67 on 2025-06-06
+
+Average price: 5571.96
+Median price: 5569.90
+Standard deviation: 11.03
+
+MONTHLY BREAKDOWN
+-----------------
+2025-03: 0.00% change (Start: 5580.94, End: 5580.94)
+    Min: 5580.94, Max: 5580.94, Avg: 5580.94
+2025-04: -0.55% change (Start: 5621.10, End: 5589.95)
+    Min: 5575.35, Max: 5621.10, Avg: 5584.88
+2025-05: -0.02% change (Start: 5575.31, End: 5574.12)
+    Min: 5565.31, Max: 5581.92, Avg: 5573.74
+2025-06: 0.16% change (Start: 5557.66, End: 5566.47)
+    Min: 5555.67, Max: 5570.09, Avg: 5562.45
+2025-07: -0.64% change (Start: 5602.95, End: 5566.82)
+    Min: 5557.20, Max: 5602.95, Avg: 5566.73
+2025-08: 0.00% change (Start: 5559.31, End: 5559.31)
+    Min: 5559.31, Max: 5559.31, Avg: 5559.31
+
+VISUALIZATION NOTES
+-------------------
+The following visualization files have been created in the reports/ directory:
+- forecast_with_history.png: Historical data with forecast
+- detailed_forecast.png: Detailed forecast with trend line
+- monthly_forecast_stats.png: Monthly statistics of the forecast
+
+=================================================

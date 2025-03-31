@@ -1,0 +1,438 @@
+2025-03-30 00:01:07,884 - INFO - Starting model training...
+2025-03-30 00:01:07,932 - INFO - Using features: ['Open', 'High', 'Low', 'Volume', 'Return', 'MA_5', 'MA_10', 'MA_20', 'MA_50', 'Volatility', 'Daily_Change', 'RSI', 'Log_Volume', 'MACD', 'Signal_Line', 'Upper_Band', 'Lower_Band', 'Price_Lag_1', 'Volume_Lag_1', 'Price_Lag_2', 'Volume_Lag_2', 'Price_Lag_3', 'Volume_Lag_3', 'Price_Lag_5', 'Volume_Lag_5', 'Price_Lag_7', 'Volume_Lag_7', 'Price_Lag_10', 'Volume_Lag_10', 'Price_Lag_14', 'Volume_Lag_14', 'Price_Lag_21', 'Volume_Lag_21', 'Price_Lag_30', 'Volume_Lag_30', 'Price_Lag_50', 'Volume_Lag_50', 'MA_5_Lag_1', 'MA_10_Lag_1', 'MA_20_Lag_1', 'Price_MA_5_Ratio', 'Price_MA_10_Ratio', 'Price_MA_20_Ratio', 'Price_MA_50_Ratio', 'Volatility_Volume', 'BB_Width']
+2025-03-30 00:01:07,934 - INFO - Starting hyperparameter optimization...
+2025-03-30 00:06:54,046 - INFO - Best parameters: {'n_estimators': 400, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.8, 'max_depth': 8, 'bootstrap': False}
+2025-03-30 00:07:09,941 - INFO - 
+=== Model Evaluation ===
+2025-03-30 00:07:09,942 - INFO - CV RMSE: 0.0496 ± 0.0464
+2025-03-30 00:07:09,942 - INFO - Test RMSE: 0.1662
+2025-03-30 00:07:09,942 - INFO - Test MAE: 0.1410
+2025-03-30 00:07:09,942 - INFO - Test R2: -1.9659
+2025-03-30 00:07:09,942 - INFO - 
+Top 10 Features:
+2025-03-30 00:07:09,945 - INFO -         Feature  Importance
+2           Low    0.706072
+1          High    0.213783
+0          Open    0.062698
+17  Price_Lag_1    0.006139
+5          MA_5    0.003525
+7         MA_20    0.002418
+8         MA_50    0.001208
+39  MA_20_Lag_1    0.001017
+38  MA_10_Lag_1    0.000689
+6         MA_10    0.000687
+2025-03-30 00:12:05,828 - INFO - Запуск обучения модели...
+2025-03-30 00:12:05,828 - ERROR - Ошибка при обучении модели: name 'os' is not defined
+Traceback (most recent call last):
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\03_model_train.py", line 141, in train_model
+    os.makedirs("reports", exist_ok=True)
+    ^^
+NameError: name 'os' is not defined. Did you forget to import 'os'?
+2025-03-30 00:13:03,313 - INFO - Запуск обучения модели...
+2025-03-30 00:13:03,314 - ERROR - Ошибка при обучении модели: name 'os' is not defined
+Traceback (most recent call last):
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\03_model_train.py", line 141, in train_model
+    os.makedirs("reports", exist_ok=True)
+    ^^
+NameError: name 'os' is not defined. Did you forget to import 'os'?
+2025-03-30 00:14:21,277 - INFO - Запуск обучения модели...
+2025-03-30 00:14:22,291 - WARNING - Не удалось загрузить VIX: You are trying to merge on datetime64[ns] and datetime64[ns, America/Chicago] columns for key 'Date'. If you wish to proceed you should use pd.concat
+2025-03-30 00:14:22,292 - INFO - Используется 48 признаков
+2025-03-30 00:14:22,293 - INFO - Проверка стационарности цен закрытия:
+2025-03-30 00:14:22,462 - INFO - ADF Statistic: -1.2060
+2025-03-30 00:14:22,462 - INFO - p-value: 0.6710
+2025-03-30 00:14:22,462 - INFO - Ряд не стационарен
+2025-03-30 00:14:22,462 - INFO - Применяем дифференцирование...
+2025-03-30 00:14:22,463 - INFO - Начало оптимизации гиперпараметров...
+2025-03-30 00:41:54,472 - INFO - Лучшие параметры: {'n_estimators': 400, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 0.7, 'max_depth': 3, 'learning_rate': 0.05}
+2025-03-30 00:41:54,814 - ERROR - Ошибка при обучении модели: x and y must have same first dimension, but have shapes (243,) and (242,)
+Traceback (most recent call last):
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\03_model_train.py", line 178, in train_model
+    plot_predictions(y_test, predictions['Predicted'], test_dates, 'GradientBoosting')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\03_model_train.py", line 121, in plot_predictions
+    plt.plot(dates, y_true, label='Actual', linewidth=2, color='#2ca02c')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\matplotlib\pyplot.py", line 3827, in plot
+    return gca().plot(
+           ~~~~~~~~~~^
+        *args,
+        ^^^^^^
+    ...<3 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\matplotlib\axes\_axes.py", line 1777, in plot
+    lines = [*self._get_lines(self, *args, data=data, **kwargs)]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\matplotlib\axes\_base.py", line 297, in __call__
+    yield from self._plot_args(
+               ~~~~~~~~~~~~~~~^
+        axes, this, kwargs, ambiguous_fmt_datakey=ambiguous_fmt_datakey,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        return_kwargs=return_kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\matplotlib\axes\_base.py", line 494, in _plot_args
+    raise ValueError(f"x and y must have same first dimension, but "
+                     f"have shapes {x.shape} and {y.shape}")
+ValueError: x and y must have same first dimension, but have shapes (243,) and (242,)
+2025-03-30 00:54:08,781 - INFO - Запуск обучения модели...
+2025-03-30 00:54:09,658 - INFO - Данные VIX успешно добавлены
+2025-03-30 00:54:09,658 - INFO - Используется 50 признаков
+2025-03-30 00:54:09,659 - INFO - Проверка стационарности цен закрытия:
+2025-03-30 00:54:09,703 - INFO - ADF Statistic: -1.2060
+2025-03-30 00:54:09,703 - INFO - p-value: 0.6710
+2025-03-30 00:54:09,703 - INFO - Ряд не стационарен
+2025-03-30 00:54:09,703 - INFO - Применяем дифференцирование...
+2025-03-30 00:54:09,704 - INFO - Начало оптимизации гиперпараметров...
+2025-03-30 01:16:42,196 - INFO - Лучшие параметры: {'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 1, 'max_features': 0.7, 'max_depth': 5, 'learning_rate': 0.05}
+2025-03-30 01:16:44,450 - INFO - 
+=== Результаты модели ===
+2025-03-30 01:16:44,451 - INFO - Test RMSE: 0.0037
+2025-03-30 01:16:44,451 - INFO - Test MAE: 0.0021
+2025-03-30 01:16:44,451 - INFO - Test R2: 0.9472
+2025-03-30 01:16:44,451 - INFO - 
+Лучшие параметры: {'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 1, 'max_features': 0.7, 'max_depth': 5, 'learning_rate': 0.05}
+2025-03-30 01:45:06,434 - INFO - Запуск обучения модели...
+2025-03-30 01:45:07,676 - INFO - Данные VIX успешно добавлены
+2025-03-30 01:45:07,677 - INFO - Используется 50 признаков
+2025-03-30 01:45:07,678 - INFO - Проверка стационарности цен закрытия:
+2025-03-30 01:45:07,728 - INFO - ADF Statistic: -1.2060
+2025-03-30 01:45:07,728 - INFO - p-value: 0.6710
+2025-03-30 01:45:07,728 - INFO - Ряд не стационарен
+2025-03-30 01:45:07,728 - INFO - Применяем дифференцирование...
+2025-03-30 01:45:07,729 - INFO - Начало оптимизации гиперпараметров...
+2025-03-30 02:10:41,918 - INFO - Лучшие параметры: {'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 1, 'max_features': 0.7, 'max_depth': 5, 'learning_rate': 0.05}
+2025-03-30 02:10:45,011 - INFO - 
+=== Результаты модели ===
+2025-03-30 02:10:45,012 - INFO - Test RMSE: 0.0037
+2025-03-30 02:10:45,012 - INFO - Test MAE: 0.0021
+2025-03-30 02:10:45,012 - INFO - Test R2: 0.9472
+2025-03-30 02:10:45,012 - INFO - 
+Лучшие параметры: {'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 1, 'max_features': 0.7, 'max_depth': 5, 'learning_rate': 0.05}
+2025-03-30 02:25:11,767 - INFO - Запуск обучения модели...
+2025-03-30 02:25:13,637 - INFO - Данные VIX успешно добавлены
+2025-03-30 02:25:13,637 - INFO - Используется 50 признаков
+2025-03-30 02:25:13,638 - INFO - Проверка стационарности цен закрытия:
+2025-03-30 02:25:13,686 - INFO - ADF Statistic: -1.2060
+2025-03-30 02:25:13,687 - INFO - p-value: 0.6710
+2025-03-30 02:25:13,687 - INFO - Ряд не стационарен
+2025-03-30 02:25:13,687 - INFO - Применяем дифференцирование...
+2025-03-30 02:25:13,688 - INFO - Начало оптимизации гиперпараметров...
+2025-03-30 02:50:52,982 - INFO - Лучшие параметры: {'n_estimators': 300, 'min_samples_split': 10, 'min_samples_leaf': 1, 'max_features': 0.7, 'max_depth': 3, 'learning_rate': 0.05}
+2025-03-30 02:50:55,407 - INFO - Feature importance saved to database
+2025-03-30 02:50:55,884 - ERROR - Error saving results to DB: Error binding parameter 4: type 'dict' is not supported
+2025-03-30 02:50:55,884 - ERROR - Ошибка при обучении модели: Error binding parameter 4: type 'dict' is not supported
+Traceback (most recent call last):
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\03_model_train.py", line 230, in train_model
+    save_results_to_db(test_dates, y_test, test_pred, metrics)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\03_model_train.py", line 117, in save_results_to_db
+    pd.DataFrame([metrics]).to_sql("metrics", conn, if_exists="replace", index=False)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\core\generic.py", line 3087, in to_sql
+    return sql.to_sql(
+           ~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<8 lines>...
+        method=method,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\io\sql.py", line 842, in to_sql
+    return pandas_sql.to_sql(
+           ~~~~~~~~~~~~~~~~~^
+        frame,
+        ^^^^^^
+    ...<9 lines>...
+        **engine_kwargs,
+        ^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\io\sql.py", line 2851, in to_sql
+    return table.insert(chunksize, method)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\io\sql.py", line 1119, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\io\sql.py", line 2547, in _execute_insert
+    conn.executemany(self.insert_statement(num_rows=1), data_list)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.ProgrammingError: Error binding parameter 4: type 'dict' is not supported
+2025-03-30 02:56:19,336 - INFO - Запуск обучения модели...
+2025-03-30 02:56:19,962 - INFO - Данные VIX успешно добавлены
+2025-03-30 02:56:19,963 - INFO - Используется 50 признаков
+2025-03-30 02:56:19,964 - INFO - Проверка стационарности цен закрытия:
+2025-03-30 02:56:20,007 - INFO - ADF Statistic: -1.2060
+2025-03-30 02:56:20,007 - INFO - p-value: 0.6710
+2025-03-30 02:56:20,007 - INFO - Ряд не стационарен
+2025-03-30 02:56:20,008 - INFO - Применяем дифференцирование...
+2025-03-30 02:56:20,008 - INFO - Начало оптимизации гиперпараметров...
+2025-03-30 03:24:20,605 - INFO - Лучшие параметры: {'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 0.7, 'max_depth': 3, 'learning_rate': 0.1}
+2025-03-30 03:24:23,077 - INFO - Feature importance saved to database
+2025-03-30 03:24:24,109 - INFO - Results saved to database
+2025-03-30 03:24:24,109 - INFO - 
+=== Результаты модели ===
+2025-03-30 03:24:24,109 - INFO - Test RMSE: 0.0036
+2025-03-30 03:24:24,109 - INFO - Test MAE: 0.0021
+2025-03-30 03:24:24,109 - INFO - Test R2: 0.9489
+2025-03-30 03:24:24,109 - INFO - 
+Лучшие параметры: {'n_estimators': 200, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 0.7, 'max_depth': 3, 'learning_rate': 0.1}
+2025-03-30 03:38:15,862 - INFO - Запуск обучения модели...
+2025-03-30 03:38:16,624 - INFO - Данные VIX успешно добавлены
+2025-03-30 03:38:16,624 - INFO - Используется 50 признаков
+2025-03-30 03:38:16,626 - INFO - Проверка стационарности цен закрытия:
+2025-03-30 03:38:16,688 - INFO - ADF Statistic: -1.2060
+2025-03-30 03:38:16,688 - INFO - p-value: 0.6710
+2025-03-30 03:38:16,688 - INFO - Ряд не стационарен
+2025-03-30 03:38:16,688 - INFO - Применяем дифференцирование...
+2025-03-30 03:38:16,690 - INFO - Начало оптимизации гиперпараметров...
+2025-03-30 04:01:36,822 - INFO - Лучшие параметры: {'n_estimators': 300, 'min_samples_split': 10, 'min_samples_leaf': 1, 'max_features': 0.7, 'max_depth': 3, 'learning_rate': 0.1}
+2025-03-30 04:01:36,925 - INFO - Используется 12 признаков
+2025-03-30 04:01:36,935 - ERROR - Ошибка при обучении модели: 'Close'
+Traceback (most recent call last):
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Close'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\03_model_train.py", line 224, in train_model
+    X_future, _ = prepare_features(future_df)
+                  ~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\03_model_train.py", line 35, in prepare_features
+    return df[features], df['Close']
+                         ~~^^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\core\frame.py", line 4102, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Close'
+2025-03-30 04:13:08,234 - INFO - Запуск обучения модели...
+2025-03-30 04:13:08,900 - INFO - Данные VIX успешно добавлены
+2025-03-30 04:13:08,900 - INFO - Используется 50 признаков
+2025-03-30 04:13:08,901 - INFO - Проверка стационарности цен закрытия:
+2025-03-30 04:13:08,945 - INFO - ADF Statistic: -1.2060
+2025-03-30 04:13:08,945 - INFO - p-value: 0.6710
+2025-03-30 04:13:08,945 - INFO - Ряд не стационарен
+2025-03-30 04:13:08,945 - INFO - Применяем дифференцирование...
+2025-03-30 04:13:08,946 - INFO - Начало оптимизации гиперпараметров...
+2025-03-30 04:37:12,288 - INFO - Лучшие параметры: {'n_estimators': 400, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 0.7, 'max_depth': 3, 'learning_rate': 0.05}
+2025-03-30 04:37:12,314 - INFO - Используется 35 признаков
+2025-03-30 04:37:12,316 - ERROR - Ошибка при обучении модели: The feature names should match those that were passed during fit.
+Feature names seen at fit time, yet now missing:
+- Log_Volume
+- MA_10_Lag_1
+- MA_20_Lag_1
+- MA_5_Lag_1
+- Return
+- ...
+Traceback (most recent call last):
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\03_model_train.py", line 249, in train_model
+    future_pred = np.expm1(model.predict(X_future))
+                           ~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\sklearn\ensemble\_gb.py", line 2144, in predict
+    X = validate_data(
+        self, X, dtype=DTYPE, order="C", accept_sparse="csr", reset=False
+    )
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\sklearn\utils\validation.py", line 2919, in validate_data
+    _check_feature_names(_estimator, X, reset=reset)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\sklearn\utils\validation.py", line 2777, in _check_feature_names
+    raise ValueError(message)
+ValueError: The feature names should match those that were passed during fit.
+Feature names seen at fit time, yet now missing:
+- Log_Volume
+- MA_10_Lag_1
+- MA_20_Lag_1
+- MA_5_Lag_1
+- Return
+- ...
+
+2025-03-30 05:03:06,044 - INFO - Запуск обучения модели...
+2025-03-30 05:03:06,838 - INFO - Данные VIX успешно добавлены
+2025-03-30 05:03:06,838 - INFO - Используется 50 признаков
+2025-03-30 05:03:06,839 - INFO - Проверка стационарности цен закрытия:
+2025-03-30 05:03:06,885 - INFO - ADF Statistic: -1.2060
+2025-03-30 05:03:06,885 - INFO - p-value: 0.6710
+2025-03-30 05:03:06,886 - INFO - Ряд не стационарен
+2025-03-30 05:03:06,886 - INFO - Применяем дифференцирование...
+2025-03-30 05:03:06,887 - INFO - Начало оптимизации гиперпараметров...
+2025-03-30 05:26:23,522 - INFO - Лучшие параметры: {'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 0.7, 'max_depth': 3, 'learning_rate': 0.1}
+2025-03-30 05:26:23,552 - INFO - Используется 50 признаков
+2025-03-30 05:26:24,789 - INFO - Results saved to database
+2025-03-30 05:26:24,789 - INFO - 
+=== Результаты модели ===
+2025-03-30 05:26:24,790 - INFO - Test RMSE: 0.0035
+2025-03-30 05:26:24,790 - INFO - Test MAE: 0.0020
+2025-03-30 05:26:24,790 - INFO - Test R2: 0.9529
+2025-03-30 06:11:05,659 - INFO - Запуск обучения модели...
+2025-03-30 06:11:06,582 - INFO - Data loaded with shape: (18681, 94)
+2025-03-30 06:11:06,583 - INFO - Date range: 1951-01-02 00:00:00 to 2025-03-28 00:00:00
+2025-03-30 06:11:06,583 - INFO - Используется 87 признаков
+2025-03-30 06:11:06,588 - INFO - Проверка стационарности цен закрытия:
+2025-03-30 06:11:08,560 - INFO - ADF Statistic: 4.6959
+2025-03-30 06:11:08,560 - INFO - p-value: 1.0000
+2025-03-30 06:11:08,560 - INFO - Ряд не стационарен
+2025-03-30 06:11:08,561 - INFO - Training data shape: (18591, 87), Test data shape: (90, 87)
+2025-03-30 06:11:08,561 - INFO - Начало оптимизации гиперпараметров...
+2025-03-30 08:06:31,583 - INFO - Лучшие параметры: {'model__subsample': 0.9, 'model__n_estimators': 300, 'model__min_samples_split': 5, 'model__min_samples_leaf': 2, 'model__max_features': 0.3, 'model__max_depth': 3, 'model__learning_rate': 0.1}
+2025-03-30 08:06:31,980 - INFO - Топ-10 важных признаков:
+2025-03-30 08:06:31,980 - INFO -                Feature  Importance
+29         Price_Lag_1    0.233585
+32         Price_Lag_2    0.198998
+3                MA_20    0.152036
+2                MA_10    0.122306
+1                 MA_5    0.096797
+80  Volume_Price_Ratio    0.060829
+11          Upper_Band    0.056612
+66         MA_20_Lag_1    0.027351
+56        Price_Lag_50    0.012365
+62          MA_5_Lag_1    0.012082
+2025-03-30 08:06:32,735 - INFO - Feature importance plot saved to reports/feature_importance.png
+2025-03-30 08:06:33,705 - INFO - Results saved to database
+2025-03-30 08:06:33,705 - INFO - 
+=== Результаты модели ===
+2025-03-30 08:06:33,705 - INFO - Test RMSE: 0.0337
+2025-03-30 08:06:33,705 - INFO - Test MAE: 0.0311
+2025-03-30 08:06:33,706 - INFO - Test R2: -0.7828
+2025-03-30 08:06:33,706 - INFO - Model saved to models/sp500_model.joblib
+2025-03-30 08:14:23,122 - INFO - Запуск обучения модели...
+2025-03-30 08:14:24,044 - INFO - Data loaded with shape: (18681, 94)
+2025-03-30 08:14:24,045 - INFO - Date range: 1951-01-02 00:00:00 to 2025-03-28 00:00:00
+2025-03-30 08:14:24,045 - INFO - Используется 87 признаков
+2025-03-30 08:14:24,050 - INFO - Проверка стационарности цен закрытия:
+2025-03-30 08:14:25,965 - INFO - ADF Statistic: 4.6959
+2025-03-30 08:14:25,965 - INFO - p-value: 1.0000
+2025-03-30 08:14:25,965 - INFO - Ряд не стационарен
+2025-03-30 08:14:25,965 - INFO - Training data shape: (18591, 87), Test data shape: (90, 87)
+2025-03-30 08:14:25,966 - INFO - Начало оптимизации гиперпараметров...
+2025-03-30 10:09:23,356 - INFO - Лучшие параметры: {'model__subsample': 0.9, 'model__n_estimators': 300, 'model__min_samples_split': 5, 'model__min_samples_leaf': 2, 'model__max_features': 0.3, 'model__max_depth': 3, 'model__learning_rate': 0.1}
+2025-03-30 10:09:23,740 - INFO - Топ-10 важных признаков:
+2025-03-30 10:09:23,740 - INFO -                Feature  Importance
+29         Price_Lag_1    0.233585
+32         Price_Lag_2    0.198998
+3                MA_20    0.152036
+2                MA_10    0.122306
+1                 MA_5    0.096797
+80  Volume_Price_Ratio    0.060829
+11          Upper_Band    0.056612
+66         MA_20_Lag_1    0.027351
+56        Price_Lag_50    0.012365
+62          MA_5_Lag_1    0.012082
+2025-03-30 10:09:24,493 - INFO - Feature importance plot saved to reports/feature_importance.png
+2025-03-30 10:09:25,398 - INFO - Results saved to database
+2025-03-30 10:09:25,398 - INFO - 
+=== Результаты модели ===
+2025-03-30 10:09:25,398 - INFO - Test RMSE: 0.0337
+2025-03-30 10:09:25,399 - INFO - Test MAE: 0.0311
+2025-03-30 10:09:25,399 - INFO - Test R2: -0.7828
+2025-03-30 10:09:25,399 - INFO - Model saved to models/sp500_model.joblib
+2025-03-30 17:24:54,196 - INFO - === Starting model training ===
+2025-03-30 17:24:54,196 - INFO - Target type: next_price, Forecast horizon: 1 days
+2025-03-30 17:24:55,176 - INFO - Loaded processed data with shape: (18681, 98)
+2025-03-30 17:24:55,176 - INFO - Date range: 1951-01-02 00:00:00 to 2025-03-28 00:00:00
+2025-03-30 17:24:55,177 - INFO - Using target variable: Next_Close_1d
+2025-03-30 17:24:55,177 - INFO - Number of features: 70
+2025-03-30 17:24:55,182 - INFO - Train set: 13076 samples (1951-01-02 00:00:00 to 2002-12-17 00:00:00)
+2025-03-30 17:24:55,183 - INFO - Validation set: 1868 samples (2002-12-18 00:00:00 to 2010-05-20 00:00:00)
+2025-03-30 17:24:55,183 - INFO - Test set: 3737 samples (2010-05-21 00:00:00 to 2025-03-28 00:00:00)
+2025-03-30 17:24:55,184 - INFO - Training GradientBoosting model...
+2025-03-30 18:03:07,628 - INFO - GradientBoosting validation score: -324.253325
+2025-03-30 18:03:07,629 - INFO - Best parameters: {'subsample': 0.9, 'n_estimators': 200, 'min_samples_split': 5, 'max_depth': 3, 'learning_rate': 0.05}
+2025-03-30 18:03:07,629 - INFO - Training Ridge model...
+2025-03-30 18:03:08,243 - INFO - Ridge validation score: -208.447318
+2025-03-30 18:03:08,243 - INFO - Best parameters: {'alpha': 0.1}
+2025-03-30 18:03:08,243 - INFO - Training RandomForest model...
+2025-03-30 18:42:16,846 - INFO - RandomForest validation score: -288.591972
+2025-03-30 18:42:16,846 - INFO - Best parameters: {'n_estimators': 100, 'min_samples_split': 10, 'max_depth': 10}
+2025-03-30 18:42:16,846 - INFO - Best model: Ridge with validation score: -208.447318
+2025-03-30 18:42:16,851 - ERROR - Error evaluating model: Input contains NaN.
+2025-03-30 18:42:16,851 - ERROR - Error in model training pipeline: Input contains NaN.
+Traceback (most recent call last):
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\03_model_train.py", line 446, in train_model
+    results_df, metrics = evaluate_model_performance(best_model, X_test, y_test, dates_test, target_type)
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\03_model_train.py", line 271, in evaluate_model_performance
+    mse = mean_squared_error(y_test, predictions)
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\sklearn\utils\_param_validation.py", line 216, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\sklearn\metrics\_regression.py", line 565, in mean_squared_error
+    _check_reg_targets_with_floating_dtype(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        y_true, y_pred, sample_weight, multioutput, xp=xp
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\sklearn\metrics\_regression.py", line 198, in _check_reg_targets_with_floating_dtype
+    y_type, y_true, y_pred, multioutput = _check_reg_targets(
+                                          ~~~~~~~~~~~~~~~~~~^
+        y_true, y_pred, multioutput, dtype=dtype_name, xp=xp
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\sklearn\metrics\_regression.py", line 105, in _check_reg_targets
+    y_true = check_array(y_true, ensure_2d=False, dtype=dtype)
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\sklearn\utils\validation.py", line 1107, in check_array
+    _assert_all_finite(
+    ~~~~~~~~~~~~~~~~~~^
+        array,
+        ^^^^^^
+    ...<2 lines>...
+        allow_nan=ensure_all_finite == "allow-nan",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\sklearn\utils\validation.py", line 120, in _assert_all_finite
+    _assert_all_finite_element_wise(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        X,
+        ^^
+    ...<4 lines>...
+        input_name=input_name,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\sklearn\utils\validation.py", line 169, in _assert_all_finite_element_wise
+    raise ValueError(msg_err)
+ValueError: Input contains NaN.
+2025-03-31 06:57:53,508 - INFO - === Starting model training ===
+2025-03-31 06:57:53,509 - INFO - Target type: next_price, Forecast horizon: 1 days
+2025-03-31 06:57:54,687 - INFO - Loaded processed data with shape: (18681, 98)
+2025-03-31 06:57:54,688 - INFO - Date range: 1951-01-02 00:00:00 to 2025-03-28 00:00:00
+2025-03-31 06:57:54,688 - INFO - Using target variable: Next_Close_1d
+2025-03-31 06:57:54,688 - INFO - Number of features: 70
+2025-03-31 06:57:54,694 - INFO - Train set: 13076 samples (1951-01-02 00:00:00 to 2002-12-17 00:00:00)
+2025-03-31 06:57:54,695 - INFO - Validation set: 1868 samples (2002-12-18 00:00:00 to 2010-05-20 00:00:00)
+2025-03-31 06:57:54,695 - INFO - Test set: 3737 samples (2010-05-21 00:00:00 to 2025-03-28 00:00:00)
+2025-03-31 06:57:54,695 - INFO - Training GradientBoosting model...
+2025-03-31 07:41:19,859 - INFO - GradientBoosting validation score: -320.886900
+2025-03-31 07:41:19,860 - INFO - Best parameters: {'subsample': 0.9, 'n_estimators': 200, 'min_samples_split': 5, 'max_depth': 3, 'learning_rate': 0.05}
+2025-03-31 07:41:19,860 - INFO - Training Ridge model...
+2025-03-31 07:41:20,241 - INFO - Ridge validation score: -208.447228
+2025-03-31 07:41:20,241 - INFO - Best parameters: {'alpha': 0.1}
+2025-03-31 07:41:20,241 - INFO - Training RandomForest model...
+2025-03-31 08:21:25,084 - INFO - RandomForest validation score: -288.551189
+2025-03-31 08:21:25,085 - INFO - Best parameters: {'n_estimators': 100, 'min_samples_split': 10, 'max_depth': 10}
+2025-03-31 08:21:25,085 - INFO - Best model: Ridge with validation score: -208.447228
+2025-03-31 08:21:25,556 - INFO - 
+=== Model Performance ===
+2025-03-31 08:21:25,556 - INFO - MSE: 1114.224061
+2025-03-31 08:21:25,556 - INFO - RMSE: 33.379995
+2025-03-31 08:21:25,556 - INFO - MAE: 21.611772
+2025-03-31 08:21:25,557 - INFO - R²: 0.999346
+2025-03-31 08:21:27,990 - INFO - Model performance visualizations saved to reports/ directory
+2025-03-31 08:21:27,992 - INFO - Model saved to models/sp500_next_price_model.joblib
+2025-03-31 08:21:27,992 - INFO - Model info saved to models/model_info.json
+2025-03-31 08:21:27,992 - INFO - === Model training completed successfully ===

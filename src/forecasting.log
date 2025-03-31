@@ -1,0 +1,148 @@
+2025-03-30 05:29:46,747 - INFO - Starting forecasting process...
+2025-03-30 05:29:47,983 - ERROR - Forecasting failed: The feature names should match those that were passed during fit.
+Feature names seen at fit time, yet now missing:
+- BB_Width
+- Daily_Change
+- Log_Volume
+- Lower_Band
+- MACD
+- ...
+Traceback (most recent call last):
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\05_forecast.py", line 118, in main
+    future_df['Predicted'] = model.predict(X_future)
+                             ~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\sklearn\ensemble\_gb.py", line 2144, in predict
+    X = validate_data(
+        self, X, dtype=DTYPE, order="C", accept_sparse="csr", reset=False
+    )
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\sklearn\utils\validation.py", line 2919, in validate_data
+    _check_feature_names(_estimator, X, reset=reset)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\sklearn\utils\validation.py", line 2777, in _check_feature_names
+    raise ValueError(message)
+ValueError: The feature names should match those that were passed during fit.
+Feature names seen at fit time, yet now missing:
+- BB_Width
+- Daily_Change
+- Log_Volume
+- Lower_Band
+- MACD
+- ...
+
+2025-03-30 05:32:33,714 - INFO - Starting forecasting process...
+2025-03-30 05:32:34,300 - INFO - Successfully generated forecasts for 30 days
+2025-03-30 08:06:36,269 - INFO - Starting forecasting process...
+2025-03-30 08:06:36,463 - INFO - Model loaded successfully from models/sp500_model.joblib
+2025-03-30 08:06:36,464 - INFO - Feature names loaded from models/feature_names.json
+2025-03-30 08:06:36,464 - INFO - Loaded 87 features
+2025-03-30 08:06:36,477 - INFO - Last historical date: 2025-03-28
+2025-03-30 08:06:36,478 - INFO - Created forecast for 63 trading days, from 2025-03-31 to 2025-06-25
+2025-03-30 08:06:36,500 - WARNING - Missing features: {'49', '50', '23', '58', '52', '60', '63', '85', '15', '4', '65', '11', '9', '47', '10', '68', '75', '5', '34', '12', '2', '29', '76', '36', '41', '66', '78', '46', '71', '79', '3', '22', '51', '21', '26', '77', '61', '48', '83', '18', '38', '57', '42', '37', '39', '64', '17', '62', '43', '0', '54', '16', '55', '53', '56', '72', '74', '20', '80', '30', '70', '33', '14', '19', '28', '32', '8', '84', '69', '24', '13', '1', '35', '59', '31', '25', '27', '82', '67', '7', '44', '86', '6', '40', '73', '81', '45'}
+2025-03-30 08:06:36,527 - INFO - Removing extra features: {'Return_Lag_3', 'Return_Lag_50', 'Week_of_year', 'Return', 'Day_of_month', 'Return_Lag_1', 'Month', 'Price_Lag_30', 'BB_Width', 'RSI', 'Return_Lag_21', 'Volume_Lag_5', 'MA_5', 'Is_month_start', 'Return_Lag_30', 'Volume_Lag_10', 'Quarter', 'VIX_Change', 'Daily_Change', 'Price_Lag_1', 'Return_Lag_5', 'Volume_Lag_50', 'Lower_Band', 'Price_Lag_3', 'Volatility', 'Price_Lag_7', 'Year', 'Is_month_end', 'Return_Lag_7', 'Is_quarter_end', 'Price_Lag_2', 'Price_Lag_14', 'Volume_Lag_21', 'Is_quarter_start', 'Upper_Band', 'Price_Lag_63', 'Volume_Lag_3', 'Return_Lag_2', 'MA_10', 'Day_of_week', 'Volume_Lag_7', 'Volume_Lag_14', 'Return_Lag_63', 'Volume_Lag_30', 'Log_Volume', 'Volume_Lag_63', 'Return_Lag_14', 'Price_Lag_10', 'Volume_Lag_2', 'MA_20', 'Price_Lag_5', 'MACD', 'Price_Lag_21', 'Signal_Line', 'Return_Lag_10', 'Volume_Lag_1', 'VIX', 'Price_Lag_50', 'MA_50'}
+2025-03-30 08:06:36,530 - ERROR - Error preparing future data: Passing a dict as an indexer is not supported. Use a list instead.
+Traceback (most recent call last):
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\05_forecast.py", line 178, in prepare_future_data
+    X_future = future_df[feature_names].copy()
+               ~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\core\frame.py", line 4063, in __getitem__
+    check_dict_or_set_indexers(key)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\core\indexing.py", line 2783, in check_dict_or_set_indexers
+    raise TypeError(
+        "Passing a dict as an indexer is not supported. Use a list instead."
+    )
+TypeError: Passing a dict as an indexer is not supported. Use a list instead.
+2025-03-30 08:06:36,535 - ERROR - Forecasting failed: Passing a dict as an indexer is not supported. Use a list instead.
+Traceback (most recent call last):
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\05_forecast.py", line 233, in main
+    future_df, future_dates = prepare_future_data(feature_names, forecast_days=forecast_days)
+                              ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src\05_forecast.py", line 178, in prepare_future_data
+    X_future = future_df[feature_names].copy()
+               ~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\core\frame.py", line 4063, in __getitem__
+    check_dict_or_set_indexers(key)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\.venv\Lib\site-packages\pandas\core\indexing.py", line 2783, in check_dict_or_set_indexers
+    raise TypeError(
+        "Passing a dict as an indexer is not supported. Use a list instead."
+    )
+TypeError: Passing a dict as an indexer is not supported. Use a list instead.
+2025-03-30 10:09:28,025 - INFO - Using FORECAST_DAYS from environment: 90
+2025-03-30 10:09:28,026 - INFO - Starting forecasting process...
+2025-03-30 10:09:28,220 - INFO - Model loaded successfully from models/sp500_model.joblib
+2025-03-30 10:09:28,221 - INFO - Feature names loaded from models/feature_names.json
+2025-03-30 10:09:28,221 - INFO - Loaded 87 features
+2025-03-30 10:09:28,234 - INFO - Last historical date: 2025-03-28
+2025-03-30 10:09:28,235 - INFO - Created forecast for 63 trading days, from 2025-03-31 to 2025-06-25
+2025-03-30 10:09:28,256 - WARNING - Missing features: {'MA_5_Lag_1', 'RSI_Momentum', 'Volatility_Volume', 'MA_20_50_Diff', 'RSI_Lag_5', 'Price_MA_50_Ratio', 'Price_MA_20_Ratio', 'Volume_Price_Ratio', 'Price_MA_10_Ratio', 'MA_20_Lag_1', 'Price_MA_5_Ratio', 'Bull_Market', 'Volatility_Lag_5', 'Volatility_Ratio', 'VIX_Ratio', 'RSI_Lag_1', 'MA_10_Lag_5', 'Trend_Strength', 'MA_5_10_Diff', 'RSI_MA_5', 'MA_5_Lag_5', 'Volatility_Lag_1', 'MA_10_20_Diff', 'VIX_MA_10', 'Price_Momentum', 'MA_20_Lag_5', 'MA_10_Lag_1', 'Bear_Market'}
+2025-03-30 10:09:28,261 - INFO - Making predictions for 63 days
+2025-03-30 10:09:28,709 - INFO - Forecasts saved to database and CSV
+2025-03-30 10:09:28,709 - INFO - Successfully generated forecasts for 63 days
+2025-03-30 10:09:28,709 - INFO - Forecast period: 2025-03-31 to 2025-06-25
+2025-03-30 10:09:28,709 - INFO - Forecasted change: 1.53%
+2025-03-31 08:21:31,916 - INFO - === Starting S&P 500 forecast process ===
+2025-03-31 08:21:31,916 - INFO - Forecast period: 90 days
+2025-03-31 08:21:31,917 - INFO - Loaded training configuration: {'features': ['Return', 'MA_5', 'MA_10', 'MA_20', 'MA_50', 'MA_200', 'Volatility', 'Daily_Change', 'Daily_Range', 'RSI', 'Log_Volume', 'MACD', 'Signal_Line', 'MACD_Hist', 'BB_Width', 'Price_to_MA_5', 'Price_to_MA_10', 'Price_to_MA_20', 'Price_to_MA_50', 'MA_5_to_MA_20', 'ROC_5', 'ROC_10', 'ROC_20', 'Day_of_week', 'Month', 'Quarter', 'Year', 'Is_month_start', 'Day_of_month', 'Week_of_year', 'Is_quarter_start', 'Month_sin', 'Month_cos', 'Day_of_week_sin', 'Day_of_week_cos', 'Price_Lag_1', 'Price_Lag_2', 'Price_Lag_3', 'Price_Lag_5', 'Price_Lag_10', 'Price_Lag_21', 'MA_5_Lag_1', 'MA_5_Lag_5', 'MA_10_Lag_1', 'MA_10_Lag_5', 'MA_20_Lag_1', 'MA_20_Lag_5', 'MA_50_Lag_1', 'MA_50_Lag_5', 'RSI_Lag_1', 'MACD_Lag_1', 'BB_Width_Lag_1', 'Volatility_Lag_1', 'Log_Volume_Lag_1', 'Log_Volume_Lag_5', 'Log_Volume_Lag_10', 'RSI_MACD', 'Volatility_Volume', 'ROC_RSI', 'Trend_Strength', 'Above_200MA', 'Above_50MA', 'Vol_Relative', 'Volume_Delta', 'VIX', 'VIX_Change', 'VIX_MA_10', 'VIX_Ratio', 'VIX_RSI', 'Log_Close'], 'target_column': 'Next_Close_1d', 'target_type': 'next_price', 'forecast_horizon': 1}
+2025-03-31 08:21:31,917 - INFO - Model type: Ridge
+2025-03-31 08:21:31,917 - INFO - Training date: 2025-03-31
+2025-03-31 08:21:31,917 - INFO - Model performance: R² = 0.9993458220133232, RMSE = 33.379994915685785
+2025-03-31 08:21:31,918 - INFO - Target variable info loaded: Mean = 873.1211037452787
+2025-03-31 08:21:32,102 - INFO - Model loaded from models/sp500_next_price_model.joblib
+2025-03-31 08:21:32,103 - INFO - Feature scaler loaded
+2025-03-31 08:21:32,120 - INFO - Loaded 60 recent records from sp500_recent
+2025-03-31 08:21:32,124 - INFO - Last available date: 2025-03-28 00:00:00
+2025-03-31 08:21:32,125 - INFO - Generated forecast dates from 2025-03-31 00:00:00 to 2025-08-01 00:00:00
+2025-03-31 08:21:32,126 - INFO - Using 70 features for forecast
+2025-03-31 08:21:32,166 - INFO - Applied feature scaling to 70 features
+2025-03-31 08:21:32,168 - WARNING - Warning: First forecast price (80.71) differs significantly from last real price (5580.94)
+2025-03-31 08:21:32,630 - INFO - Forecast saved to database and CSV
+2025-03-31 08:21:32,631 - INFO - Last real date: 2025-03-28 00:00:00, price: 5580.94
+2025-03-31 08:21:32,631 - INFO - Forecast end date: 2025-08-01 00:00:00, price: 80.40
+2025-03-31 08:21:32,631 - INFO - Forecasted total change: -98.56%
+2025-03-31 08:21:32,636 - INFO - 
+Monthly forecast statistics:
+2025-03-31 08:21:32,637 - INFO - 2025-03: 0.00% change (Start: 80.71, End: 80.71, Min: 80.71, Max: 80.71)
+2025-03-31 08:21:32,637 - INFO - 2025-04: -0.55% change (Start: 81.29, End: 80.84, Min: 80.63, Max: 81.29)
+2025-03-31 08:21:32,637 - INFO - 2025-05: -0.02% change (Start: 80.63, End: 80.61, Min: 80.49, Max: 80.73)
+2025-03-31 08:21:32,637 - INFO - 2025-06: 0.16% change (Start: 80.37, End: 80.50, Min: 80.35, Max: 80.55)
+2025-03-31 08:21:32,638 - INFO - 2025-07: -0.64% change (Start: 81.03, End: 80.51, Min: 80.37, Max: 81.03)
+2025-03-31 08:21:32,638 - INFO - 2025-08: 0.00% change (Start: 80.40, End: 80.40, Min: 80.40, Max: 80.40)
+2025-03-31 08:21:36,746 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-31 08:21:36,747 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-31 08:21:37,920 - INFO - Forecast report created at reports/forecast_report.txt
+2025-03-31 08:21:37,920 - INFO - Forecast visualizations saved to reports directory
+2025-03-31 08:21:37,920 - INFO - === Forecast process completed successfully ===
+2025-03-31 15:07:42,605 - INFO - === Starting S&P 500 forecast process ===
+2025-03-31 15:07:42,605 - INFO - Forecast period: 90 days
+2025-03-31 15:07:42,605 - INFO - Loaded training configuration: {'features': ['Return', 'MA_5', 'MA_10', 'MA_20', 'MA_50', 'MA_200', 'Volatility', 'Daily_Change', 'Daily_Range', 'RSI', 'Log_Volume', 'MACD', 'Signal_Line', 'MACD_Hist', 'BB_Width', 'Price_to_MA_5', 'Price_to_MA_10', 'Price_to_MA_20', 'Price_to_MA_50', 'MA_5_to_MA_20', 'ROC_5', 'ROC_10', 'ROC_20', 'Day_of_week', 'Month', 'Quarter', 'Year', 'Is_month_start', 'Day_of_month', 'Week_of_year', 'Is_quarter_start', 'Month_sin', 'Month_cos', 'Day_of_week_sin', 'Day_of_week_cos', 'Price_Lag_1', 'Price_Lag_2', 'Price_Lag_3', 'Price_Lag_5', 'Price_Lag_10', 'Price_Lag_21', 'MA_5_Lag_1', 'MA_5_Lag_5', 'MA_10_Lag_1', 'MA_10_Lag_5', 'MA_20_Lag_1', 'MA_20_Lag_5', 'MA_50_Lag_1', 'MA_50_Lag_5', 'RSI_Lag_1', 'MACD_Lag_1', 'BB_Width_Lag_1', 'Volatility_Lag_1', 'Log_Volume_Lag_1', 'Log_Volume_Lag_5', 'Log_Volume_Lag_10', 'RSI_MACD', 'Volatility_Volume', 'ROC_RSI', 'Trend_Strength', 'Above_200MA', 'Above_50MA', 'Vol_Relative', 'Volume_Delta', 'VIX', 'VIX_Change', 'VIX_MA_10', 'VIX_Ratio', 'VIX_RSI', 'Log_Close'], 'target_column': 'Next_Close_1d', 'target_type': 'next_price', 'forecast_horizon': 1}
+2025-03-31 15:07:42,606 - INFO - Model type: Ridge
+2025-03-31 15:07:42,606 - INFO - Training date: 2025-03-31
+2025-03-31 15:07:42,606 - INFO - Model performance: R² = 0.9993458220133232, RMSE = 33.379994915685785
+2025-03-31 15:07:42,607 - INFO - Target variable info loaded: Mean = 873.1211037452787
+2025-03-31 15:07:42,775 - INFO - Model loaded from models/sp500_next_price_model.joblib
+2025-03-31 15:07:42,776 - INFO - Feature scaler loaded
+2025-03-31 15:07:42,789 - INFO - Loaded 60 recent records from sp500_recent
+2025-03-31 15:07:42,794 - INFO - Last available date: 2025-03-28 00:00:00
+2025-03-31 15:07:42,795 - INFO - Generated forecast dates from 2025-03-31 00:00:00 to 2025-08-01 00:00:00
+2025-03-31 15:07:42,795 - INFO - Using 70 features for forecast
+2025-03-31 15:07:42,870 - INFO - Applied feature scaling to 70 features
+2025-03-31 15:07:42,877 - WARNING - Warning: First forecast price (80.71) differs significantly from last real price (5580.94)
+2025-03-31 15:07:42,877 - INFO - Applying scaling factor: 69.14696825900783
+2025-03-31 15:07:43,268 - INFO - Forecast saved to database and CSV
+2025-03-31 15:07:43,268 - INFO - Last real date: 2025-03-28 00:00:00, price: 5580.94
+2025-03-31 15:07:43,268 - INFO - Forecast end date: 2025-08-01 00:00:00, price: 5559.31
+2025-03-31 15:07:43,269 - INFO - Forecasted total change: -0.39%
+2025-03-31 15:07:43,275 - INFO - 
+Monthly forecast statistics:
+2025-03-31 15:07:43,276 - INFO - 2025-03: 0.00% change (Start: 5580.94, End: 5580.94, Min: 5580.94, Max: 5580.94)
+2025-03-31 15:07:43,276 - INFO - 2025-04: -0.55% change (Start: 5621.10, End: 5589.95, Min: 5575.35, Max: 5621.10)
+2025-03-31 15:07:43,276 - INFO - 2025-05: -0.02% change (Start: 5575.31, End: 5574.12, Min: 5565.31, Max: 5581.92)
+2025-03-31 15:07:43,277 - INFO - 2025-06: 0.16% change (Start: 5557.66, End: 5566.47, Min: 5555.67, Max: 5570.09)
+2025-03-31 15:07:43,277 - INFO - 2025-07: -0.64% change (Start: 5602.95, End: 5566.82, Min: 5557.20, Max: 5602.95)
+2025-03-31 15:07:43,277 - INFO - 2025-08: 0.00% change (Start: 5559.31, End: 5559.31, Min: 5559.31, Max: 5559.31)
+2025-03-31 15:07:54,811 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-31 15:07:54,812 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-31 15:07:57,555 - INFO - Forecast report created at reports/forecast_report.txt
+2025-03-31 15:07:57,556 - INFO - Forecast visualizations saved to reports directory
+2025-03-31 15:07:57,556 - INFO - === Forecast process completed successfully ===
