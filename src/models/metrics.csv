@@ -1,0 +1,2 @@
+CV_RMSE,CV_RMSE_std,Test_RMSE,Test_MAE,Test_R2,Best_Params
+0.0496446898580664,0.04637405576136454,0.16619618264446975,0.14104978166474888,-1.9659157491799233,"{'n_estimators': 400, 'min_samples_split': 2, 'min_samples_leaf': 4, 'max_features': 0.8, 'max_depth': 8, 'bootstrap': False}"
