@@ -4,24 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1ea308b8-ff24-4b9a-adf2-c940a6effbbc" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/sp500_forecasting_project.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/READme.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/license.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/01_data_fetch.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/02_data_preprocess.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/03_model_train.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/04_results_export.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/05_forecast.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/data_validation.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/import_csv_to_sqlite.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/run_pipeline.py" afterDir="false" />
+    <list default="true" id="1ea308b8-ff24-4b9a-adf2-c940a6effbbc" name="Changes" comment="update">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data_fetch.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data_import.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data_preprocessing.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/forecasting.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model_training.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reports/detailed_forecast.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reports/forecast_report.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reports/forecast_with_history.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reports/monthly_forecast_stats.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/visualization.log" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,6 +36,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;locotrashpanda&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/locotrashpanda/sp500_forecasting_project.git&quot;,
+    &quot;accountId&quot;: &quot;d9db67ba-39b3-49bb-bffb-a1d1c26cd335&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
@@ -52,22 +59,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.00_scraping_yfinance.executor&quot;: &quot;Run&quot;,
-    &quot;Python.01_data_fetch.executor&quot;: &quot;Run&quot;,
-    &quot;Python.02_data_preprocess.executor&quot;: &quot;Run&quot;,
-    &quot;Python.03_model_train.executor&quot;: &quot;Run&quot;,
-    &quot;Python.04_results_export.executor&quot;: &quot;Run&quot;,
-    &quot;Python.05_forecast.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Web Scraping Yahoo Finance.executor&quot;: &quot;Run&quot;,
-    &quot;Python.run_pipeline.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.00_scraping_yfinance.executor": "Run",
+    "Python.01_data_fetch.executor": "Run",
+    "Python.02_data_preprocess.executor": "Run",
+    "Python.03_model_train.executor": "Run",
+    "Python.04_results_export.executor": "Run",
+    "Python.05_forecast.executor": "Run",
+    "Python.Web Scraping Yahoo Finance.executor": "Run",
+    "Python.run_pipeline.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "run.code.analysis.last.selected.profile": "aDefault",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\LocoTrashPanda\PycharmProjects\sp500_forecasting_project\src" />
@@ -89,6 +97,19 @@
       <option name="presentableId" value="Default" />
       <updated>1743232117767</updated>
     </task>
+    <task id="LOCAL-00001" summary="update">
+      <option name="closed" value="true" />
+      <created>1743463312582</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1743463312582</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="update" />
+    <option name="LAST_COMMIT_MESSAGE" value="update" />
   </component>
 </project>
